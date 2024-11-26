@@ -1,4 +1,4 @@
-import { authErrors } from "@/app/errors";
+import { authErrors } from "@/errors";
 import { prisma } from "@/lib/db";
 import { calculatePercentageChange, fillMissingDays, sendError } from "@/lib/utils";
 import { differenceInDays, parse, subDays } from "date-fns";

@@ -1,4 +1,4 @@
-import { accountErrors, authErrors, categoriesErrors, transactionsErrors } from "@/app/errors";
+import { accountErrors, authErrors, categoriesErrors, transactionsErrors } from "@/errors";
 import { prisma } from "@/lib/db";
 import { sendError } from "@/lib/utils";
 import { parse, subDays } from "date-fns";

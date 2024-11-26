@@ -1,4 +1,4 @@
-import { authErrors, accountErrors } from "@/app/errors";
+import { authErrors, accountErrors } from "@/errors";
 import { prisma } from "@/lib/db";
 import { sendError } from "@/lib/utils";
 import { NextResponse } from "next/server";
