@@ -1,6 +1,15 @@
+import { authErrors } from '@/errors';
+import { useSearchParams } from 'next/navigation';
 import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa'
 
 export default function FormFeedback({ message, type }: { message: string | undefined, type: 'error' | 'success' }) {
+  const searchparams = useSearchParams();
+  const error_description = searchparams.get('error_description') as keyof typeof authErrors;
+
+  if (error_description) {
+    message = authErrors[error_description].error || '';
+    type = 'error';
+  }
 
   if (!message) return null;
 
