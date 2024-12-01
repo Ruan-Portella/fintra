@@ -14,3 +14,16 @@ export const RegisterSchema = z.object({
 });
 
 export type typeRegisterSchema = z.infer<typeof RegisterSchema>;
+
+export const ForgotPasswordSchema = z.object({
+  email: z.string().email({ message: 'Email inválido' }),
+});
+
+export type typeForgotPasswordSchema = z.infer<typeof ForgotPasswordSchema>;
+
+export const ResetPasswordSchema = z.object({
+  password: z.string().min(6, { message: 'Senha deve ter no mínimo 6 caracteres' }),
+  password_confirmation: z.string().min(6, { message: 'Senha deve ter no mínimo 6 caracteres' }),
+});
+
+export type typeResetPasswordSchema = z.infer<typeof ResetPasswordSchema>;

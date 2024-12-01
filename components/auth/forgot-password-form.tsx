@@ -1,7 +1,7 @@
 "use client";
 import React from 'react'
 import { useTransition } from 'react';
-import { LoginSchema, typeLoginSchema } from '@/schemas';
+import { ForgotPasswordSchema, typeForgotPasswordSchema } from '@/schemas';
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CardWrapper } from './card-wrapper'
@@ -15,30 +15,27 @@ import {
 } from '../ui/form'
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { login } from '@/actions/auth/actions';
+import { forgotPassword } from '@/actions/auth/actions';
 import FormFeedback from '../form-feedback';
-import Link from 'next/link';
 
-
-export default function LoginForm() {
+export default function ForgotPasswordForm() {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = React.useState<string | undefined>('');
   const [success, setSuccess] = React.useState<string | undefined>('');
 
-  const form = useForm<typeLoginSchema>({
-    resolver: zodResolver(LoginSchema),
+  const form = useForm<typeForgotPasswordSchema>({
+    resolver: zodResolver(ForgotPasswordSchema),
     defaultValues: {
       email: '',
-      password: '',
     }
   })
 
-  const handleSubmit = async (values: typeLoginSchema) => {
+  const handleSubmit = async (values: typeForgotPasswordSchema) => {
     setError('')
     setSuccess('')
 
     startTransition(() => {
-      login(values)
+      forgotPassword(values)
         .then((response: { error?: string; success?: string } | undefined) => {
           if (response) {
             setError(response.error);
@@ -49,7 +46,7 @@ export default function LoginForm() {
   }
 
   return (
-    <CardWrapper headerLabel='Bem vindo de volta!' backButtonLabel='Não tem uma conta?' backButtonHref='/auth/register' showSocial>
+    <CardWrapper headerLabel='Vamos te ajudar a recuperar sua senha!' backButtonLabel='Lembrou da senha?' backButtonHref='/auth/login'>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-6'>
           <div className='space-y-4'>
@@ -62,24 +59,10 @@ export default function LoginForm() {
                 <FormMessage />
               </FormItem>
             )} />
-            <FormField control={form.control} name='password' render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input {...field} disabled={isPending} type='password' placeholder='******' />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )} />
-            <Button variant='link' className="font-normal px-0" size='sm' asChild>
-              <Link href={'/auth/forgot-password'}>
-                Esqueceu sua senha?
-              </Link>
-            </Button>
           </div>
           <FormFeedback message={error || success} type={error ? 'error' : 'success'} />
           <Button type='submit' className='w-full' disabled={isPending}>
-            Entrar
+            Redefinir senha
           </Button>
         </form>
       </Form>

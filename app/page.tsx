@@ -12,7 +12,7 @@ export default async function Home() {
 
   return <div>
     <h1>Home</h1>
-    <p>Welcome {data.user.email}</p>
+    <p>Welcome {data.user.user_metadata.first_name}</p>
     <form>
       <button formAction={signOutAction}>Logout</button>
     </form>

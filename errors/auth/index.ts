@@ -4,6 +4,7 @@ export const authErrors = {
   "UNKNOWN_ERROR": { error: "Erro desconhecido", status: 500 },
   "OVER_EMAIL_SEND_RATE_LIMIT": { error: "Você atingiu o limite de envio de e-mails", status: 429 },
   "EMAIL_NOT_CONFIRMED": { error: "Email não confirmado", status: 401 },
+  "PASSWORD_MISMATCH": { error: "Senhas não conferem", status: 401 },
   "Email link is invalid or has expired": { error: "Link de email inválido ou expirado", status: 403 },
 };
 

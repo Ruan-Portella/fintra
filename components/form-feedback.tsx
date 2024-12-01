@@ -7,7 +7,7 @@ export default function FormFeedback({ message, type }: { message: string | unde
   const error_description = searchparams.get('error_description') as keyof typeof authErrors;
 
   if (error_description) {
-    message = authErrors[error_description].error || '';
+    message = authErrors[error_description] && authErrors[error_description].error || '';
     type = 'error';
   }
 

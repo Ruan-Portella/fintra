@@ -1,7 +1,7 @@
 "use client";
 import React from 'react'
 import { useTransition } from 'react';
-import { LoginSchema, typeLoginSchema } from '@/schemas';
+import { ResetPasswordSchema, typeResetPasswordSchema } from '@/schemas';
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CardWrapper } from './card-wrapper'
@@ -15,30 +15,28 @@ import {
 } from '../ui/form'
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { login } from '@/actions/auth/actions';
+import { resetPassword } from '@/actions/auth/actions';
 import FormFeedback from '../form-feedback';
-import Link from 'next/link';
 
-
-export default function LoginForm() {
+export default function ResetPasswordForm() {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = React.useState<string | undefined>('');
   const [success, setSuccess] = React.useState<string | undefined>('');
 
-  const form = useForm<typeLoginSchema>({
-    resolver: zodResolver(LoginSchema),
+  const form = useForm<typeResetPasswordSchema>({
+    resolver: zodResolver(ResetPasswordSchema),
     defaultValues: {
-      email: '',
       password: '',
+      password_confirmation: '',
     }
   })
 
-  const handleSubmit = async (values: typeLoginSchema) => {
+  const handleSubmit = async (values: typeResetPasswordSchema) => {
     setError('')
     setSuccess('')
 
     startTransition(() => {
-      login(values)
+      resetPassword(values)
         .then((response: { error?: string; success?: string } | undefined) => {
           if (response) {
             setError(response.error);
@@ -49,37 +47,32 @@ export default function LoginForm() {
   }
 
   return (
-    <CardWrapper headerLabel='Bem vindo de volta!' backButtonLabel='Não tem uma conta?' backButtonHref='/auth/register' showSocial>
+    <CardWrapper headerLabel='Vamos te ajudar a recuperar sua senha!' backButtonLabel='Deseja ficar com a senha antiga?' backButtonHref='/'>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-6'>
           <div className='space-y-4'>
-            <FormField control={form.control} name='email' render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input {...field} disabled={isPending} type='email' placeholder='Email' />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )} />
             <FormField control={form.control} name='password' render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Nova Senha</FormLabel>
                 <FormControl>
                   <Input {...field} disabled={isPending} type='password' placeholder='******' />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )} />
-            <Button variant='link' className="font-normal px-0" size='sm' asChild>
-              <Link href={'/auth/forgot-password'}>
-                Esqueceu sua senha?
-              </Link>
-            </Button>
+            <FormField control={form.control} name='password_confirmation' render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirme sua senha</FormLabel>
+                <FormControl>
+                  <Input {...field} disabled={isPending} type='password' placeholder='******' />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
           </div>
           <FormFeedback message={error || success} type={error ? 'error' : 'success'} />
           <Button type='submit' className='w-full' disabled={isPending}>
-            Entrar
+            Redefinir senha
           </Button>
         </form>
       </Form>
