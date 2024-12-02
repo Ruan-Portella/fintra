@@ -39,7 +39,7 @@ export async function register(data: typeRegisterSchema) {
     ...data,
     options: {
       data: {
-        first_name: data.name,
+        full_name: data.name,
       }
     }
   })
