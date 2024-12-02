@@ -1,10 +1,15 @@
 import { clsx, type ClassValue } from "clsx"
-import { eachDayOfInterval, isSameDay } from "date-fns"
+import { addDays, eachDayOfInterval, format, isSameDay, subDays } from "date-fns"
+import { ptBR } from "date-fns/locale"
 import { NextResponse } from "next/server"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
+}
+
+export function convertMiliunitsToAmount(miliunits: number) {
+  return miliunits / 1000
 }
 
 export function sendError(errors: { error: string, status: number }) {
@@ -21,6 +26,27 @@ export function calculatePercentageChange(
 
   return ((current - previous) / Math.abs(previous)) * 100
 }
+
+export function formatCurrency(amount: number) {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2
+  }).format(amount)
+}
+
+export function formatPercentage(value: number, options: {addPrefix?: boolean} = {addPrefix: false}) {
+  const result = new Intl.NumberFormat('pt-BR', {
+    style: 'percent',
+  }).format(value / 100)
+
+  if (options.addPrefix && value > 0) {
+    return `+${result}`;
+  }
+
+  return result;
+}
+
 
 export function fillMissingDays(
   activeDays: {
@@ -52,4 +78,24 @@ export function fillMissingDays(
   });
 
   return transactionsByDay
+}
+
+type Period = {
+  from: string | Date | undefined,
+  to: string | Date | undefined
+}
+
+export function formatDateRange (period?: Period) {
+  const defaultTo = new Date()
+  const defaultFrom = subDays(defaultTo, 30)
+
+  if (!period?.from) {
+    return `${format(defaultFrom, 'dd LLL', { locale: ptBR })} - ${format(defaultTo, 'dd LLL, y', { locale: ptBR })}`
+  }
+
+  if (period.to) {
+    return `${format(addDays(new Date(period.from), 1), 'LLL dd', { locale: ptBR })} - ${format(addDays(new Date(period.to), 1), 'LLL dd, y', { locale: ptBR })}`
+  }
+
+  return `${format(period.from, 'LLL dd, y', { locale: ptBR })}`
 }
