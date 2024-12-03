@@ -44,3 +44,19 @@ export const deleteAccounts = z.object({
 });
 
 export const ResponseSchema = z.array(accountsSchema);
+
+export const categorySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  userId: z.string(),
+});
+
+export const categoryEditSchema = z.object({
+  name: z.string(),
+});
+
+export const deleteCategory = z.object({
+  ids: z.array(z.string())
+});
+
+export const ResponseCategorySchema = z.array(categorySchema);
