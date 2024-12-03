@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { QueryProvider } from "@/providers/query-provider";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { Toaster } from "@/components/ui/sonner";
+import { SheetProvider } from "@/providers/sheet-provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,6 +33,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <QueryProvider>
+        <SheetProvider />
+        <Toaster />
         <ReactQueryDevtools initialIsOpen={false} />
           {children}
         </QueryProvider>

@@ -27,3 +27,20 @@ export const ResetPasswordSchema = z.object({
 });
 
 export type typeResetPasswordSchema = z.infer<typeof ResetPasswordSchema>;
+
+
+export const accountsSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  userId: z.string(),
+});
+
+export const accountsEditSchema = z.object({
+  name: z.string(),
+});
+
+export const deleteAccounts = z.object({
+  ids: z.array(z.string())
+});
+
+export const ResponseSchema = z.array(accountsSchema);

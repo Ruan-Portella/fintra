@@ -32,6 +32,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[],
   filterKey: string,
+  filterName: string,
   onDelete: (rows: Row<TData>[]) => void,
   disabled?: boolean
 }
@@ -40,10 +41,11 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   filterKey,
+  filterName,
   onDelete,
   disabled,
 }: DataTableProps<TData, TValue>) {
-  const [ConfirmDialog, confirm] = useConfirm('Are you sure?', 'This action cannot be undone.')
+  const [ConfirmDialog, confirm] = useConfirm('Você tem certeza?', 'Essa ação não pode ser desfeita.')
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = React.useState({})
@@ -70,7 +72,7 @@ export function DataTable<TData, TValue>({
       <ConfirmDialog />
       <div className="flex items-center py-4">
         <Input
-          placeholder={`Filter ${filterKey}...`}
+          placeholder={`Filtrar ${filterName}...`}
           value={(table.getColumn(filterKey)?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn(filterKey)?.setFilterValue(event.target.value)
@@ -88,7 +90,7 @@ export function DataTable<TData, TValue>({
               }
             }} disabled={disabled} size='sm' variant='outline' className="ml-auto font-normal text-xs">
               <Trash className="mr-2 size-4" />
-              Delete ({table.getFilteredSelectedRowModel().rows.length})
+              Deletar ({table.getFilteredSelectedRowModel().rows.length})
             </Button>
           )
         }
@@ -130,7 +132,7 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                  Sem resultados.
                 </TableCell>
               </TableRow>
             )}
@@ -139,8 +141,8 @@ export function DataTable<TData, TValue>({
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredSelectedRowModel().rows.length} de{" "}
+          {table.getFilteredRowModel().rows.length} linha(s) selecionadas.
         </div>
         <Button
           variant="outline"
