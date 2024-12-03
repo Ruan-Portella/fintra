@@ -16,7 +16,7 @@ export const useBulkDeleteAccounts = () => {
       });
 
       if (response.data.error) {
-        throw new Error("Failed to create account");
+        throw new Error("Failed to delete account");
       }
     
       return response.data;
