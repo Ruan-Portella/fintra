@@ -60,3 +60,51 @@ export const deleteCategory = z.object({
 });
 
 export const ResponseCategorySchema = z.array(categorySchema);
+
+export const transactionsSchema = z.object({
+  id: z.string(),
+  amount: z.number(),
+  date: z.date(),
+  payee: z.string(),
+  accountId: z.string(),
+  account: z.string(),
+  categoryId: z.string(),
+  category: z.string(),
+  description: z.string(),
+});
+
+export const transactionsApiFormSchema = z.object({
+  amount: z.string(),
+  date: z.date(),
+  payee: z.string(),
+  accountId: z.string(),
+  categoryId: z.string(),
+  description: z.string(),
+});
+
+export const transactionsFormSchema = z.object({
+  id: z.string(),
+  amount: z.string(),
+  date: z.date(),
+  payee: z.string(),
+  accountId: z.string(),
+  account: z.string(),
+  categoryId: z.string(),
+  category: z.string(),
+  description: z.string(),
+});
+
+export const transactionsEditSchema = z.object({
+  amount: z.number(),
+  date: z.string(),
+  payee: z.string(),
+  accountId: z.string(),
+  categoryId: z.string(),
+  description: z.string(),
+});
+
+export const deleteTransactions = z.object({
+  ids: z.array(z.string())
+});
+
+export const ResponseTransactionsSchema = z.array(transactionsSchema);

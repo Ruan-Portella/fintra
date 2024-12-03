@@ -35,6 +35,7 @@ export const Select = ({
       onChange={onSelect}
       onCreateOption={onCreate}
       options={options}
+      formatCreateLabel={(inputValue) => `Criar "${inputValue}"`}
       isDisabled={disabled}
       placeholder={placeholder}
       className="text-sm h-10"
