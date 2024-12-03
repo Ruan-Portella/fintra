@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { AccountColumn } from "./accounts-column"
 import { CategoryColumn } from "./category-column"
 import { transactionsSchema } from "@/schemas"
+import { ptBR } from "date-fns/locale"
 
 export type ResponseType = z.infer<typeof transactionsSchema>
 
@@ -62,7 +63,7 @@ export const columns: ColumnDef<ResponseType>[] = [
 
       return (
         <span>
-          {format(date, 'dd MMMM, yyyy')}
+          {format(date, 'dd MMMM, yyyy', { locale: ptBR })}	
         </span>
       )
     },

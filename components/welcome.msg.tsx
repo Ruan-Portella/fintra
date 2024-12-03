@@ -12,7 +12,7 @@ export default async function WelcomeMsg() {
             <h2 className='text-2xl lg:text-4xl text-white font-medium'>
               Bem-vindo! {user.data.user.user_metadata.full_name} 👋
             </h2>
-            <p className="text-sm lg:text-base text-[#89b6fb]">
+            <p className="text-sm lg:text-base text-white">
               Esse é o seu painel de controle, aqui você pode visualizar e gerenciar suas transações.
             </p>
           </>
