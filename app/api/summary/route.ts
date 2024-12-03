@@ -1,6 +1,7 @@
 import { authErrors } from "@/errors";
 import { prisma } from "@/lib/db";
 import { calculatePercentageChange, fillMissingDays, sendError } from "@/lib/utils";
+import { createClient } from "@/utils/supabase/server";
 import { differenceInDays, parse, subDays } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -37,7 +38,8 @@ async function fetchFinancialData(userId: string, startDate: Date, endDate: Date
 
 export async function GET(req: NextRequest) {
   try {
-    const userId = '1';
+    const supabase = await createClient();
+    const userId = (await supabase.auth.getUser()).data.user?.id;
     const searchParams = req.nextUrl.searchParams
   
     if (!userId) {
