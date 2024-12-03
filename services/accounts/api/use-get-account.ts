@@ -11,8 +11,8 @@ export const useGetAccount = (id?: string) => {
       if (response.data.error) {
         throw new Error("Failed to fetch accounts");
       }
-    
-      return response.data;
+
+      return response.data[0];
     }
   });
   return query;

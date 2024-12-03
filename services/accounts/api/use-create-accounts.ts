@@ -12,18 +12,18 @@ export const useCreateAccount = () => {
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (json) => {
       const response = await axios.post(`/api/accounts`, {
-        data: {...json}
+        ...json
       });
 
       if (response.data.error) {
         throw new Error("Failed to create account");
       }
-    
+
       return response.data;
     },
     onSuccess: () => {
       toast.success('Conta criada com sucesso');
-      queryClient.invalidateQueries({queryKey: ['accounts']});
+      queryClient.invalidateQueries({ queryKey: ['accounts'] });
     },
     onError: () => {
       toast.error('Erro ao criar conta');

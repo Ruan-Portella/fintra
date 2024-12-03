@@ -12,23 +12,21 @@ export const useEditAccount = (id?: string) => {
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (json) => {
       const response = await axios.patch(`/api/accounts/${id}`, {
-        data: {
-          ...json
-        }
+        ...json
       });
 
       if (response.data.error) {
         throw new Error("Failed to fetch accounts");
       }
-    
+
       return response.data;
     },
     onSuccess: () => {
       toast.success('Conta editada com sucesso');
-      queryClient.invalidateQueries({queryKey: ['account', {id}]});
-      queryClient.invalidateQueries({queryKey: ['accounts']});
-      queryClient.invalidateQueries({queryKey: ['transactions']});
-      queryClient.invalidateQueries({queryKey: ['summary']});
+      queryClient.invalidateQueries({ queryKey: ['account', { id }] });
+      queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['summary'] });
     },
     onError: () => {
       toast.error('Erro ao editar conta');
