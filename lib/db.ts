@@ -1,7 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 
 const prismaClientSingleton = () => {
-  return new PrismaClient()
+  return new PrismaClient({
+    transactionOptions: {
+      maxWait: 10000,
+      timeout: 10000,
+    }
+  })
 }
 
 declare const globalThis: {

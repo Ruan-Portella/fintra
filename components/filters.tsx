@@ -6,8 +6,16 @@ import DateFilter from "./date-filter";
 export const Filters = () => {
   const pathname = usePathname();
 
-  if (pathname !== "/") {
+  if (pathname !== "/" && pathname !== '/transactions') {
     return null;
+  }
+
+  if (pathname === '/transactions') {
+    return (
+      <div className="flex flex-col lg:flex-row items-center gap-y-2 lg:gap-y-0 lg:gap-x-2">
+        <DateFilter />
+      </div>
+    )
   }
 
   return (

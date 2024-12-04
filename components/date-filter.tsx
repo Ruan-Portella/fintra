@@ -12,7 +12,7 @@ import {
   useSearchParams
 } from 'next/navigation';
 
-import {formatDateRange} from '@/lib/utils';
+import { formatDateRange } from '@/lib/utils';
 
 import { Button } from './ui/button';
 import { Calendar } from './ui/calendar';
@@ -58,7 +58,7 @@ export default function DateFilter() {
     const url = qs.stringifyUrl({
       url: pathname,
       query
-    }, {skipNull: true, skipEmptyString: true});
+    }, { skipNull: true, skipEmptyString: true });
 
     router.push(url);
   };
@@ -77,27 +77,29 @@ export default function DateFilter() {
         </Button>
       </PopoverTrigger>
       <PopoverContent className='lg:w-auto w-full p-0' align='start'>
-        <Calendar
-        disabled={false}
-        initialFocus
-        mode='range'
-        defaultMonth={date?.from}
-        selected={date}
-        onSelect={setDate}
-        locale={ptBR}
-        numberOfMonths={2}
-        />
-        <div className='p-4 w-full flex items-center gap-x-2'>
-          <PopoverClose asChild>
-            <Button onClick={onReset} disabled={!date?.from || !date?.to} className='w-full' variant='outline'>
-              Resetar
-            </Button>
-          </PopoverClose>
-          <PopoverClose asChild>
-            <Button onClick={() => pushToUrl(date)} disabled={!date?.from || !date?.to} className='w-full' variant='outline'>
-              Aplicar
-            </Button>
-          </PopoverClose>
+        <div className='max-md:overflow-scroll max-md:h-[500px]'>
+          <Calendar
+            disabled={false}
+            initialFocus
+            mode='range'
+            defaultMonth={date?.from}
+            selected={date}
+            onSelect={setDate}
+            locale={ptBR}
+            numberOfMonths={2}
+          />
+          <div className='p-4 w-full flex items-center gap-x-2'>
+            <PopoverClose asChild>
+              <Button onClick={onReset} disabled={!date?.from || !date?.to} className='w-full' variant='outline'>
+                Resetar
+              </Button>
+            </PopoverClose>
+            <PopoverClose asChild>
+              <Button onClick={() => pushToUrl(date)} disabled={!date?.from || !date?.to} className='w-full' variant='outline'>
+                Aplicar
+              </Button>
+            </PopoverClose>
+          </div>
         </div>
       </PopoverContent>
     </Popover>

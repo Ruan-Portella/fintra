@@ -102,11 +102,11 @@ const generateRecurringTransactions = (transaction: ApiFormValues) => {
   return transactions;
 };
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient();
     const userId = (await supabase.auth.getUser()).data.user?.id;
-
+   
     if (!userId) {
       return sendError(authErrors.NOT_AUTHORIZED);
     }

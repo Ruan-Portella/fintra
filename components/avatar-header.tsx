@@ -21,7 +21,7 @@ export default function AvatarHeader({ user }: { user: UserResponse }) {
       <PopoverTrigger asChild>
         <Avatar className='cursor-pointer'>
           {
-            user.data.user && user.data.user.user_metadata.avatar_url && <AvatarImage src={user.data.user.user_metadata.avatar_url} />
+            user.data.user && user.data.user.user_metadata.avatar_url && <AvatarImage src={user.data.user.user_metadata.avatar_url} alt='Usuário' />
           }
           {
             !user.data.user || !user.data.user.user_metadata.avatar_url && <AvatarFallback>U</AvatarFallback>

@@ -28,12 +28,16 @@ export const useGetTransactions= () => {
   const params = useSearchParams();
   const from = params.get('from') || '';
   const to = params.get('to') || '';
-  const accountId = params.get('accountId') || '';
 
   const query = useQuery({
-    queryKey: ['transactions', { from, to, accountId }],
+    queryKey: ['transactions', { from, to }],
     queryFn: async () => {
-      const response = await axios.get("/api/transactions");
+      const response = await axios.get("/api/transactions", {
+        params: {
+          from,
+          to,
+        }
+      });
       if (response.data.error) {
         throw new Error("Failed to fetch transactions");
       }
