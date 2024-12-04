@@ -2,19 +2,21 @@
 
 import { useMemo } from "react";
 import {SingleValue} from "react-select";
-import Select from 'react-select';
+import CreatebleSelect from "react-select/creatable";
 
 type Props = {
   onChange: (value?: string) => void;
+  onCreate?: (value: string) => void;
   options?: { label: string; value: string }[];
   value?: string | null | undefined;
   disabled?: boolean;
   placeholder?: string;
 };
 
-export const InputSelect = ({
+export const Select = ({
   value,
   onChange,
+  onCreate,
   options = [],
   disabled,
   placeholder,
@@ -28,10 +30,12 @@ export const InputSelect = ({
   }, [options, value]);
 
   return (
-    <Select 
+    <CreatebleSelect 
       value={formattedValue}
       onChange={onSelect}
+      onCreateOption={onCreate}
       options={options}
+      formatCreateLabel={(inputValue) => `Criar "${inputValue}"`}
       isDisabled={disabled}
       placeholder={placeholder}
       className="text-sm h-10"

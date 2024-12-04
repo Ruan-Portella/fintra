@@ -15,29 +15,33 @@ datasource db {
 }
 
 model Account {
-  id        String   @id @default(uuid())
-  name      String
-  userId    String
+  id           String        @id @default(uuid())
+  name         String
+  userId       String
   transactions Transaction[]
 }
 
 model Category {
-  id        String   @id @default(uuid())
-  name      String
-  userId    String
+  id           String        @id @default(uuid())
+  name         String
+  userId       String
   transactions Transaction[]
 }
 
 model Transaction {
-  id          String   @id @default(uuid())
-  amount      Int
-  payee       String 
-  accountId   String
-  account     Account  @relation(fields: [accountId], references: [id])
-  categoryId  String?
-  category    Category? @relation(fields: [categoryId], references: [id])
-  description String?
-  date        DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                 String    @id @default(uuid())
+  amount             Int
+  payee              String
+  recurrenceType     String?
+  recurrenceInterval Int?
+  has_recurrence     Boolean?  @default(false)
+  recurrenceDad      String?
+  accountId          String
+  account            Account   @relation(fields: [accountId], references: [id])
+  categoryId         String?
+  category           Category? @relation(fields: [categoryId], references: [id])
+  description        String?
+  date               DateTime
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 }

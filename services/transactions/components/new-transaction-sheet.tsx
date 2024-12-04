@@ -23,15 +23,17 @@ export default function NewTransactionSheet() {
   const categoryQuery = useGetCategories();
   const categoryMutation = useCreateCategory();
   const onCreateCategory = (name: string) => categoryMutation.mutate({ name });
-  const categoryOptions = categoryQuery.data?.map((category: {id: string, name: string}) => ({
-    label: category.name,
-    value: category.id
-  })) || [];
 
   const accountQuery = useGetAccounts();
   const accountMutation = useCreateAccount();
   const onCreateAccount = (name: string) => accountMutation.mutate({ name });
-  const accountOptions = accountQuery.data?.map((account: {id: string, name: string}) => ({
+
+  const categoryOptions = Array.isArray(categoryQuery?.data) && categoryQuery?.data?.map((category: { id: string, name: string }) => ({
+    label: category.name,
+    value: category.id
+  })) || [];
+  
+  const accountOptions = Array.isArray(accountQuery?.data) && accountQuery?.data?.map((account: { id: string, name: string }) => ({
     label: account.name,
     value: account.id
   })) || [];
@@ -41,6 +43,16 @@ export default function NewTransactionSheet() {
   const isLoading = categoryQuery.isLoading || accountQuery.isLoading;
 
   const onSubmit = (values: ApiFormValues) => {
+
+    if (!values.has_recurrence) {
+      values.has_recurrence = false;
+      values.recurrenceInterval = undefined;
+      values.recurrenceType = undefined;
+    } else {
+      values.recurrenceInterval = values.recurrenceInterval || 1;
+      values.recurrenceType = values.recurrenceType || 'monthly';
+    }
+
     createMutation.mutate({
       ...values,
       date: new Date(values.date).toISOString(),

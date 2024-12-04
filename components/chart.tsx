@@ -1,4 +1,4 @@
-import { AreaChart, BarChart, FileSearch, LineChart, Loader2 } from "lucide-react";
+import { AreaChart, BarChart, FileSearch, LineChart } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import {
   Select,

@@ -10,16 +10,16 @@ import {
 } from '@/components/ui/dialog'
 import { useGetAccounts } from "../api/use-get-accounts";
 import { useCreateAccount } from "../api/use-create-accounts";
-import { Select } from "@/components/select";
+import { Select } from "@/components/creatable-select";
 
 export const useSelectAccount = (): [() => JSX.Element, () => Promise<unknown>] => {
   const accountQuery = useGetAccounts();
   const accountMutation = useCreateAccount();
   const onCreateAccount = (name: string) => accountMutation.mutate({ name });
-  const accountOptions = (accountQuery.data ?? []).map((account: {name: string, id: string}) => ({
+  const accountOptions = Array.isArray(accountQuery?.data) && accountQuery.data?.map((account: {name: string, id: string}) => ({
     label: account.name,
     value: account.id,
-  }));
+  })) || [];
 
   const [promise, setPromise] = useState<{ resolve: (value: string | undefined) => void } | null>(null);
   const selectValue = useRef<string>();

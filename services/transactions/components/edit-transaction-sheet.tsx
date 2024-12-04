@@ -29,7 +29,7 @@ export default function EditTransactionSheet() {
   const categoryQuery = useGetCategories();
   const categoryMutation = useCreateCategory();
   const onCreateCategory = (name: string) => categoryMutation.mutate({ name });
-  const categoryOptions = categoryQuery.data?.map((category: {name: string, id: string}) => ({
+  const categoryOptions = Array.isArray(categoryQuery?.data) && categoryQuery.data?.map((category: {name: string, id: string}) => ({
     label: category.name,
     value: category.id
   })) || [];
@@ -37,7 +37,7 @@ export default function EditTransactionSheet() {
   const accountQuery = useGetAccounts();
   const accountMutation = useCreateAccount();
   const onCreateAccount = (name: string) => accountMutation.mutate({ name });
-  const accountOptions = accountQuery.data?.map((account: {name: string, id: string}) => ({
+  const accountOptions = Array.isArray(accountQuery?.data) && accountQuery.data?.map((account: {name: string, id: string}) => ({
     label: account.name,
     value: account.id
   })) || [];
@@ -46,6 +46,13 @@ export default function EditTransactionSheet() {
   const isLoading = transactionQuery.isLoading || categoryQuery.isLoading || accountQuery.isLoading;
 
   const onSubmit = (values: ApiFormValues) => {
+    if (!transactionQuery.data.recurrenceDad) {
+      values.recurrenceDad = undefined;
+      values.editRecurrence = undefined;
+    } else {
+      values.editRecurrence = values.editRecurrence || 'all';
+      values.recurrenceDad = transactionQuery.data.recurrenceDad;
+    }
     editMutation.mutate({
       ...values,
       date: new Date(values.date).toISOString(),
@@ -64,6 +71,8 @@ export default function EditTransactionSheet() {
     date: transactionQuery.data.date ? new Date(transactionQuery.data.date) : new Date(),
     payee: transactionQuery.data.payee,
     description: transactionQuery.data.description,
+    editRecurrence: 'all' as 'all',
+    recurrenceDad: transactionQuery.data.recurrenceDad,
   } : {
     accountId: '',
     categoryId: '',
@@ -71,6 +80,7 @@ export default function EditTransactionSheet() {
     date: new Date(),
     payee: '',
     description: '',
+    recurrenceDad: '',
   };
 
   const onDelete = async () => {

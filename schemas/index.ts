@@ -77,6 +77,17 @@ export const transactionsApiFormSchema = z.object({
   amount: z.string(),
   date: z.date(),
   payee: z.string(),
+  recurrenceType: z.string().min(1, {
+    message: "Você precisa selecionar um tipo de recorrência",
+  }).nullable().optional(),
+  recurrenceInterval: z.number().min(1, {
+    message: "Você precisa selecionar um intervalo",
+  }).nullable().optional(),
+  recurrenceDad: z.string().nullable().optional(),
+  has_recurrence: z.boolean().nullable().optional(),
+  editRecurrence: z.enum(["all", "mentions", "none"], {
+    required_error: "Você precisa selecionar uma opção",
+  }).optional(),
   accountId: z.string(),
   categoryId: z.string(),
   description: z.string(),

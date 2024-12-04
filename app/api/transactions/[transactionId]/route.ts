@@ -30,6 +30,8 @@ export async function GET(req: Response, { params: { transactionId } }: { params
         description: true,
         account: { select: { name: true, id: true } },
         date: true,
+        recurrenceDad: true,
+        recurrenceInterval: true,
       },
     });
 
@@ -70,7 +72,136 @@ export async function PATCH(req: Response, { params: { transactionId } }: { para
       return sendError(transactionsErrors.TRANSACTION_NOT_FOUND);
     }
 
-    const { accountId, categoryId, payee, amount, description, date } = await req.json();
+    const { accountId, categoryId, payee, amount, description, date, recurrenceDad, editRecurrence } = await req.json();
+
+    if (recurrenceDad) {
+      if (editRecurrence === 'all') {
+        const toUpdatedTransactions = await prisma.transaction.findMany({
+          where: { recurrenceDad },
+        });
+
+        const typeDate = toUpdatedTransactions[0].recurrenceType || 'monthly';
+
+        let nextDate = new Date(date);
+
+        toUpdatedTransactions.forEach(async (transaction, index) => {
+          if (index !== 0) {
+            switch (typeDate) {
+              case 'DAILY':
+                nextDate.setDate(nextDate.getDate() + 1);
+                break;
+              case 'weekly':
+                nextDate.setDate(nextDate.getDate() + 7);
+                break;
+              case 'monthly':
+                nextDate.setMonth(nextDate.getMonth() + 1);
+                break;
+              case 'YEARLY':
+                nextDate.setFullYear(nextDate.getFullYear() + 1);
+                break;
+              default:
+                throw new Error('Invalid recurrence type');
+            }
+          }
+
+          try {
+            await prisma.transaction.update({
+              where: { id: transaction.id },
+              data: {
+                accountId,
+                categoryId,
+                payee,
+                amount,
+                description,
+                date: new Date(nextDate),
+              },
+            });
+          } catch (error) {
+            console.log(error)
+          } finally {
+            await prisma.$disconnect();
+          }
+        }
+        );
+        return NextResponse.json({ success: true });
+      }
+
+      if (editRecurrence === 'mentions') {
+        const toUpdatedTransactions = await prisma.transaction.findMany({
+          where: {
+            AND: [
+              { recurrenceDad },
+              { date: { gte: date } }
+            ]
+          },
+        });
+
+        const typeDate = toUpdatedTransactions[0].recurrenceType || 'monthly';
+
+        let nextDate = new Date(date);
+
+        toUpdatedTransactions.forEach(async (transaction, index) => {
+          if (index !== 0) {
+            switch (typeDate) {
+              case 'DAILY':
+                nextDate.setDate(nextDate.getDate() + 1);
+                break;
+              case 'weekly':
+                nextDate.setDate(nextDate.getDate() + 7);
+                break;
+              case 'monthly':
+                nextDate.setMonth(nextDate.getMonth() + 1);
+                break;
+              case 'YEARLY':
+                nextDate.setFullYear(nextDate.getFullYear() + 1);
+                break;
+              default:
+                throw new Error('Invalid recurrence type');
+            }
+          }
+          try {
+            await prisma.transaction.update({
+              where: { id: transaction.id },
+              data: {
+                accountId,
+                categoryId,
+                payee,
+                amount,
+                description,
+                date: new Date(nextDate),
+              },
+            });
+          } catch (error) {
+            console.log(error)
+          } finally {
+            await prisma.$disconnect();
+          }
+        }
+      );
+      return NextResponse.json({ success: true });
+      }
+
+      if (editRecurrence === 'none') {
+        try {
+          await prisma.transaction.update({
+            where: { id: transactionId },
+            data: {
+              account: { connect: { id: accountId } },
+              category: { connect: { id: categoryId } },
+              payee,
+              amount,
+              description,
+              date,
+            },
+          });
+        } catch (error) {
+          console.log(error)
+        } finally {
+          await prisma.$disconnect();
+        }
+        return NextResponse.json({ success: true });
+      }
+    }
 
     const updatedTransaction = await prisma.transaction.update({
       where: { id: transactionId },

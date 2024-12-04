@@ -4,6 +4,7 @@ import { IconType } from "react-icons"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import { Countup } from "./count-up"
 import { Skeleton } from "./ui/skeleton"
+import DataRecharts from "./data-recharts"
 
 const boxVariant = cva(
   'shrink-0 rounded-md p-3',
@@ -48,6 +49,7 @@ interface DataCardProps extends BoxVariants, IconVariants {
   value?: number;
   dateRange: string;
   percentageChange?: number;
+  variant: 'default' | 'success' | 'danger' | 'warning';
 };
 
 export const DataCard = ({
@@ -77,9 +79,10 @@ export const DataCard = ({
         <h1 className="font-bold text-2xl mb-2 line-clamp-1 break-all">
           <Countup preserveValue start={0} end={value} decimal='2' decimalPlaces={2} formattingFn={formatCurrency} />
         </h1>
-        <p className={cn('text-muted-foreground text-sm line-clamp-1', percentageChange > 0 && 'text-emerald-500', percentageChange < 0 && 'text-rose-500')}>
-          {formatPercentage(percentageChange, {addPrefix: true})} do mês anterior
+        <p className={cn('text-muted-foreground text-sm line-clamp-1 mb-10', percentageChange > 0 && 'text-emerald-500', percentageChange < 0 && 'text-rose-500')}>
+          {formatPercentage(percentageChange, { addPrefix: true })} do mês anterior
         </p>
+        <DataRecharts variant={variant} />
       </CardContent>
     </Card>
   )
@@ -87,7 +90,7 @@ export const DataCard = ({
 
 export const DataCardLoading = () => {
   return (
-    <Card className="border-none drop-shadow-sm h-[192px]">
+    <Card className="border-none drop-shadow-sm h-[235px]">
       <CardHeader className="flex flex-row items-center justify-between gap-x-4">
         <div className="space-y-2">
           <Skeleton className="h-6 w-24" />
@@ -97,7 +100,8 @@ export const DataCardLoading = () => {
       </CardHeader>
       <CardContent>
         <Skeleton className="shrink-0 h-10 w-24 mb-2" />
-        <Skeleton className="shrink-0  h-4 w-40" />
+        <Skeleton className="shrink-0  h-4 w-40 mb-2" />
+        <Skeleton className="shrink-0 w-full h-12" />
       </CardContent>
     </Card>
   )
