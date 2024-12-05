@@ -112,7 +112,7 @@ export default function Transactions() {
         </CardHeader>
         <CardContent>
           <DataTable columns={columns} data={transactions} filterKey='payee' filterName='Beneficiário' onDelete={(row) => {
-            const ids = row.map((r) => r.original.id);
+            const ids = row.map((r) => r.original.id).filter((id): id is string => id !== undefined);
             deleteTransaction.mutate({ ids });
           }} disabled={isDisabled} />
         </CardContent>

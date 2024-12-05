@@ -17,7 +17,7 @@ export const DataGrid = () => {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-2 mb-8">
+      <div className="step-1 grid grid-cols-1 lg:grid-cols-3 gap-8 pb-2 mb-8">
         <DataCardLoading />
         <DataCardLoading />
         <DataCardLoading />
@@ -26,28 +26,28 @@ export const DataGrid = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-2 mb-8">
-      <DataCard
-      title='Saldo'
-      value={data?.remainingAmount}
-      percentageChange={data?.remainingChange}
-      icon={FaPiggyBank}
-      variant='default'
-      dateRange={dateRangeLabel} />
-      <DataCard
-      title='Renda'
-      value={data?.incomeAmount}
-      percentageChange={data?.incomeChange}
-      icon={FaArrowTrendUp}
-      variant='success'
-      dateRange={dateRangeLabel} />
-      <DataCard
-      title='Despesas'
-      value={data?.expensesAmount}
-      percentageChange={data?.expensesChange}
-      icon={FaArrowTrendDown}
-      variant='danger'
-      dateRange={dateRangeLabel} />
-    </div>
+      <div className="step-1 grid grid-cols-1 lg:grid-cols-3 gap-8 pb-2 mb-8">
+        <DataCard
+          title='Saldo'
+          value={data?.remainingAmount}
+          percentageChange={data?.remainingChange}
+          icon={FaPiggyBank}
+          variant='default'
+          dateRange={dateRangeLabel} />
+        <DataCard
+          title='Renda'
+          value={data?.incomeAmount}
+          percentageChange={data?.incomeChange}
+          icon={FaArrowTrendUp}
+          variant='success'
+          dateRange={dateRangeLabel} />
+        <DataCard
+          title='Despesas'
+          value={data?.expensesAmount}
+          percentageChange={data?.expensesChange}
+          icon={FaArrowTrendDown}
+          variant='danger'
+          dateRange={dateRangeLabel} />
+      </div>
   )
 };

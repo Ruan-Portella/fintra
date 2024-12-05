@@ -11,10 +11,10 @@ import { formatCurrency } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { AccountColumn } from "./accounts-column"
 import { CategoryColumn } from "./category-column"
-import { transactionsSchema } from "@/schemas"
+import { transactionsApiFormSchema } from "@/schemas"
 import { ptBR } from "date-fns/locale"
 
-export type ResponseType = z.infer<typeof transactionsSchema>
+export type ResponseType = z.infer<typeof transactionsApiFormSchema>
 
 export const columns: ColumnDef<ResponseType>[] = [
   {
@@ -90,7 +90,7 @@ export const columns: ColumnDef<ResponseType>[] = [
     cell: ({ row }) => {
       return (
         <span>
-          <CategoryColumn category={row.original.category} categoryId={row.original.categoryId} id={row.original.id} />
+          <CategoryColumn category={row.original.category ?? ''} categoryId={row.original.categoryId} id={row.original.id ?? ''} />
         </span>
       )
     },
@@ -167,12 +167,12 @@ export const columns: ColumnDef<ResponseType>[] = [
     },
     cell: ({ row }) => {
       return (
-        <AccountColumn account={row.original.account} accountId={row.original.accountId} />
+        <AccountColumn account={row.original.account ?? ''} accountId={row.original.accountId} />
       )
     },
   },
   {
     id: 'actions',
-    cell: ({ row }) => <Actions id={row.original.id} />
+    cell: ({ row }) => <Actions id={row.original.id ?? ''} recurrenceDad={row.original.recurrenceDad ?? ''} date={row.original.date} />
   }
 ]

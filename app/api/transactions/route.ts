@@ -44,6 +44,7 @@ export async function GET(req: NextRequest) {
         description: true,
         account: { select: { name: true, id: true } },
         date: true,
+        recurrenceDad: true,
       },
       orderBy: {
         date: 'desc',
@@ -68,7 +69,7 @@ const generateRecurringTransactions = (transaction: ApiFormValues) => {
     return [transaction];
   }
 
-  let nextDate = new Date(date);
+  const nextDate = new Date(date);
 
   while (index <= recurrenceInterval) {
     const newTransaction = {

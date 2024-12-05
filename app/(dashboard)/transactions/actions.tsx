@@ -11,20 +11,39 @@ import { useDeleteTransaction } from '@/services/transactions/api/use-delete-tra
 import { useOpenTransaction } from '@/services/transactions/hooks/use-open-transaction';
 import { useConfirm } from '@/hooks/use-confirm';
 import { Edit, MoreHorizontal, Trash } from 'lucide-react';
+import { useState } from 'react';
 
 type Props = {
   id: string;
+  recurrenceDad?: string;
+  date: Date;
 }
 
-export default function Actions({ id }: Props) {
-  const [ConfirmDialog, confirm] = useConfirm('Você tem certeza de que deseja excluir esta transação?', 'Você está prestes a excluir esta transação.');
+export default function Actions({ id, recurrenceDad, date }: Props) {
+  const [editRecurrence, setEditRecurrence] = useState<"all" | "mentions" | "none" | undefined>();
+  const [ConfirmDialog, confirm] = useConfirm('Você tem certeza de que deseja excluir esta transação?', 'Você está prestes a excluir esta transação.', recurrenceDad, {
+    onChange: (value: string) => {
+      setEditRecurrence(value as 'all' | 'mentions' | 'none');
+    },
+    value: editRecurrence ?? 'all'
+  });
   const deleteMutation = useDeleteTransaction(id);
-  const { onOpen } = useOpenTransaction();
+  const { onOpen, onClose } = useOpenTransaction();
 
   const handleDelete = async () => {
     const ok = await confirm();
+
     if (ok) {
-      deleteMutation.mutate();
+      deleteMutation.mutate({
+        id: id,
+        editRecurrence: ok as 'all' | 'mentions' | 'none',
+        recurrenceDad,
+        date: new Date(date).toISOString()
+      }, {
+        onSuccess: () => {
+          onClose();
+        }
+      });
     }
   }
 

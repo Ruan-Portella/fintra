@@ -1,5 +1,5 @@
 "use client";
-import React from 'react'
+import React, { Suspense } from 'react'
 import { useTransition } from 'react';
 import { ForgotPasswordSchema, typeForgotPasswordSchema } from '@/schemas';
 import { useForm } from 'react-hook-form'
@@ -60,7 +60,9 @@ export default function ForgotPasswordForm() {
               </FormItem>
             )} />
           </div>
-          <FormFeedback message={error || success} type={error ? 'error' : 'success'} />
+          <Suspense>
+            <FormFeedback message={error || success} type={error ? 'error' : 'success'} />
+          </Suspense>
           <Button type='submit' className='w-full' disabled={isPending}>
             Redefinir senha
           </Button>

@@ -1,3 +1,4 @@
+'use client';
 import { authErrors } from '@/errors';
 import { useSearchParams } from 'next/navigation';
 import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa'

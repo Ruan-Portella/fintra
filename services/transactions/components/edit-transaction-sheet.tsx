@@ -20,12 +20,10 @@ import { useCreateAccount } from '@/services/accounts/api/use-create-accounts';
 
 export default function EditTransactionSheet() {
   const { isOpen, onClose, id } = useOpenTransaction();
-  const [ConfirmDialog, confirm] = useConfirm('Você tem certeza de que deseja excluir esta transação?', 'Você está prestes a excluir esta transação');
-
   const transactionQuery = useGetTransaction(id);
   const editMutation = useEditTransaction(id);
   const deleteMutation = useDeleteTransaction(id);
-
+  
   const categoryQuery = useGetCategories();
   const categoryMutation = useCreateCategory();
   const onCreateCategory = (name: string) => categoryMutation.mutate({ name });
@@ -33,7 +31,7 @@ export default function EditTransactionSheet() {
     label: category.name,
     value: category.id
   })) || [];
-
+  
   const accountQuery = useGetAccounts();
   const accountMutation = useCreateAccount();
   const onCreateAccount = (name: string) => accountMutation.mutate({ name });
@@ -41,9 +39,11 @@ export default function EditTransactionSheet() {
     label: account.name,
     value: account.id
   })) || [];
-
+  
   const isPending = editMutation.isPending || deleteMutation.isPending || categoryMutation.isPending || accountMutation.isPending || transactionQuery.isPending;
   const isLoading = transactionQuery.isLoading || categoryQuery.isLoading || accountQuery.isLoading;
+
+  const [ConfirmDialog, confirm] = useConfirm('Você tem certeza de que deseja excluir esta transação?', 'Atenção! Essa recorrência tem transações passadas ou futuras.');
 
   const onSubmit = (values: ApiFormValues) => {
     if (!transactionQuery.data.recurrenceDad) {
@@ -71,7 +71,7 @@ export default function EditTransactionSheet() {
     date: transactionQuery.data.date ? new Date(transactionQuery.data.date) : new Date(),
     payee: transactionQuery.data.payee,
     description: transactionQuery.data.description,
-    editRecurrence: 'all' as 'all',
+    editRecurrence: 'none' as const,
     recurrenceDad: transactionQuery.data.recurrenceDad,
   } : {
     accountId: '',
@@ -83,10 +83,22 @@ export default function EditTransactionSheet() {
     recurrenceDad: '',
   };
 
-  const onDelete = async () => {
+  const onDelete = async (values: ApiFormValues) => {
     const ok = await confirm();
+    if (!transactionQuery.data.recurrenceDad) {
+      values.recurrenceDad = undefined;
+      values.editRecurrence = undefined;
+    } else {
+      values.editRecurrence = values.editRecurrence || 'all';
+      values.recurrenceDad = transactionQuery.data.recurrenceDad;
+    }
     if (ok) {
-      deleteMutation.mutate(undefined, {
+      deleteMutation.mutate({
+        id: id,
+        editRecurrence: values.editRecurrence,
+        recurrenceDad: values.recurrenceDad,
+        date: new Date(values.date).toISOString()
+      }, {
         onSuccess: () => {
           onClose();
         }

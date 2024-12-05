@@ -3,8 +3,8 @@ import { PrismaClient } from '@prisma/client';
 const prismaClientSingleton = () => {
   return new PrismaClient({
     transactionOptions: {
-      maxWait: 10000,
-      timeout: 10000,
+      maxWait: 200000,
+      timeout: 200000,
     }
   })
 }

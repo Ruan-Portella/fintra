@@ -2,9 +2,9 @@ import { authErrors, transactionsErrors } from "@/errors";
 import { prisma } from "@/lib/db";
 import { sendError } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: Response, { params: { transactionId } }: { params: { transactionId: string } }) {
+export async function GET(req: NextRequest, { params: { transactionId } }: { params: { transactionId: string } }) {
   try {
     const supabase = await createClient();
     const userId = (await supabase.auth.getUser()).data.user?.id;
@@ -48,7 +48,7 @@ export async function GET(req: Response, { params: { transactionId } }: { params
   }
 }
 
-export async function PATCH(req: Response, { params: { transactionId } }: { params: { transactionId: string } }) {
+export async function PATCH(req: NextRequest, { params: { transactionId } }: { params: { transactionId: string } }) {
   try {
     const supabase = await createClient();
     const userId = (await supabase.auth.getUser()).data.user?.id;
@@ -82,7 +82,7 @@ export async function PATCH(req: Response, { params: { transactionId } }: { para
 
         const typeDate = toUpdatedTransactions[0].recurrenceType || 'monthly';
 
-        let nextDate = new Date(date);
+        const nextDate = new Date(date);
 
         toUpdatedTransactions.forEach(async (transaction, index) => {
           if (index !== 0) {
@@ -138,7 +138,7 @@ export async function PATCH(req: Response, { params: { transactionId } }: { para
 
         const typeDate = toUpdatedTransactions[0].recurrenceType || 'monthly';
 
-        let nextDate = new Date(date);
+        const nextDate = new Date(date);
 
         toUpdatedTransactions.forEach(async (transaction, index) => {
           if (index !== 0) {
@@ -177,8 +177,8 @@ export async function PATCH(req: Response, { params: { transactionId } }: { para
             await prisma.$disconnect();
           }
         }
-      );
-      return NextResponse.json({ success: true });
+        );
+        return NextResponse.json({ success: true });
       }
 
       if (editRecurrence === 'none') {
@@ -235,6 +235,75 @@ export async function DELETE(req: Request, { params: { transactionId } }: { para
 
     if (!transactionId) {
       return sendError(transactionsErrors.TRANSACTION_ID_REQUIRED);
+    }
+
+    const { date, recurrenceDad, editRecurrence } = await req.json();
+
+
+    if (recurrenceDad) {
+      if (editRecurrence === 'all') {
+        const toUpdatedTransactions = await prisma.transaction.findMany({
+          where: { recurrenceDad },
+        });
+
+        try {
+          const ids = toUpdatedTransactions.map((transaction) => transaction.id);
+          await prisma.transaction.deleteMany({
+            where: {
+              id: {
+                in: ids
+              }
+            }
+          });
+          return NextResponse.json({ success: true });
+        } catch (error) {
+          console.log(error)
+        } finally {
+          await prisma.$disconnect();
+        }
+      }
+
+      if (editRecurrence === 'mentions') {
+        const toUpdatedTransactions = await prisma.transaction.findMany({
+          where: {
+            AND: [
+              { recurrenceDad },
+              { date: { gte: date } }
+            ]
+          },
+        });
+
+        try {
+          const ids = toUpdatedTransactions.map((transaction) => transaction.id);
+          await prisma.transaction.deleteMany({
+            where: {
+              id: {
+                in: ids
+              }
+            }
+          });
+          return NextResponse.json({ success: true });
+        } catch (error) {
+          console.log(error)
+        } finally {
+          await prisma.$disconnect();
+        }
+      }
+
+      if (editRecurrence === 'none') {
+        try {
+          await prisma.transaction.delete({
+            where: {
+              id: transactionId
+            }
+          });
+          return NextResponse.json({ success: true });
+        } catch (error) {
+          console.log(error)
+        } finally {
+          await prisma.$disconnect();
+        }
+      }
     }
 
     const transaction = await prisma.transaction.findUnique({

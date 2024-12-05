@@ -1,5 +1,5 @@
 "use client";
-import React from 'react'
+import React, { Suspense } from 'react'
 import { useTransition } from 'react';
 import { RegisterSchema, typeRegisterSchema } from '@/schemas';
 import { useForm } from 'react-hook-form'
@@ -81,7 +81,9 @@ export default function RegisterForm() {
               </FormItem>
             )} />
           </div>
-          <FormFeedback message={error || success} type={error ? 'error' : 'success'} />
+          <Suspense>
+            <FormFeedback message={error || success} type={error ? 'error' : 'success'} />
+          </Suspense>
           <Button type='submit' className='w-full' disabled={isPending}>
             Criar conta
           </Button>

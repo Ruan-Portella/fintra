@@ -6,34 +6,41 @@ import { differenceInDays, parse, subDays } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 
 async function fetchFinancialData(userId: string, startDate: Date, endDate: Date, accountId: string | null) {
-  const data = await prisma.transaction.findMany({
-    where: {
-      AND: [
-        ...(accountId ? [{ accountId }] : []),
-        { account: { userId: userId } },
-        { date: { gte: startDate, lte: endDate } },
-      ],
-    },
-    select: {
-      amount: true,
-      accountId: true,
-    },
-    orderBy: {
-      date: 'desc',
-    },
-  });
+  try {
+    const data = await prisma.transaction.findMany({
+      where: {
+        AND: [
+          ...(accountId ? [{ accountId }] : []),
+          { account: { userId: userId } },
+          { date: { gte: startDate, lte: endDate } },
+        ],
+      },
+      select: {
+        amount: true,
+        accountId: true,
+      },
+      orderBy: {
+        date: 'desc',
+      },
+    });
 
-  const income = data.reduce((acc, transaction) => {
-    return transaction.amount >= 0 ? acc + transaction.amount : acc;
-  }, 0);
+    const income = data.reduce((acc, transaction) => {
+      return transaction.amount >= 0 ? acc + transaction.amount : acc;
+    }, 0);
 
-  const expenses = data.reduce((acc, transaction) => {
-    return transaction.amount < 0 ? acc + Math.abs(transaction.amount) : acc;
-  }, 0);
+    const expenses = data.reduce((acc, transaction) => {
+      return transaction.amount < 0 ? acc + Math.abs(transaction.amount) : acc;
+    }, 0);
 
-  const remaining = income - expenses;
+    const remaining = income - expenses;
 
-  return [{ income, expenses: -expenses, remaining }];
+    return [{ income, expenses: -expenses, remaining }];
+  } catch (e) {
+    console.error(e);
+    return [{ income: 0, expenses: 0, remaining: 0 }];
+  } finally {
+    await prisma.$disconnect();
+  }
 }
 
 export async function GET(req: NextRequest) {
@@ -41,34 +48,34 @@ export async function GET(req: NextRequest) {
     const supabase = await createClient();
     const userId = (await supabase.auth.getUser()).data.user?.id;
     const searchParams = req.nextUrl.searchParams
-  
+
     if (!userId) {
       return sendError(authErrors.NOT_AUTHORIZED)
     }
-  
+
     const from = searchParams.get('from');
     const to = searchParams.get('to');
     const accountId = searchParams.get('accountId');
-  
+
     const defaultTo = new Date();
     const defaultFrom = subDays(defaultTo, 30);
-  
+
     const startDate = from ? parse(from, 'yyyy-MM-dd', new Date()) : defaultFrom;
     const endDate = to ? parse(to, 'yyyy-MM-dd', new Date()) : defaultTo;
-  
+
     const periodLength = differenceInDays(endDate, startDate);
-    
+
     const lastPeriodStart = subDays(startDate, periodLength + 1);
     const lastPeriodEnd = subDays(endDate, periodLength + 1);
-  
+
     const [currentPeriod] = await fetchFinancialData(userId, startDate, endDate, accountId);
-  
+
     const [lastPeriod] = await fetchFinancialData(userId, lastPeriodStart, lastPeriodEnd, accountId);
-  
+
     const incomeChange = calculatePercentageChange(currentPeriod.income, lastPeriod.income);
     const expensesChange = calculatePercentageChange(currentPeriod.expenses, lastPeriod.expenses);
     const remainingChange = calculatePercentageChange(currentPeriod.remaining, lastPeriod.remaining);
-  
+
     const category = await prisma.transaction.groupBy({
       by: ['categoryId'],
       where: {
@@ -88,13 +95,13 @@ export async function GET(req: NextRequest) {
         },
       },
     });
-  
+
     const allCategories = await prisma.category.findMany({
       where: {
         userId: userId,
       },
     });
-  
+
     const result = category.map(group => {
       const categoryName = allCategories.find(category => category.id === group.categoryId);
       return {
@@ -102,16 +109,16 @@ export async function GET(req: NextRequest) {
         value: Math.abs(group._sum.amount || 0),
       }
     });
-  
+
     const topCategories = result.slice(0, 3);
     const otherCategories = result.slice(3);
     const otherSum = otherCategories.reduce((acc, category) => acc + category.value, 0);
-  
+
     const finalCategories = topCategories;
     if (otherCategories.length > 0) {
       finalCategories.push({ name: 'Other', value: otherSum });
     }
-  
+
     const data = await prisma.transaction.findMany({
       where: {
         AND: [
@@ -128,7 +135,7 @@ export async function GET(req: NextRequest) {
         date: 'desc',
       },
     });
-    
+
     const consolidated = data.reduce<{ [key: string]: { date: Date; income: number; expenses: number } }>((acc, transaction) => {
       const dateKey = transaction.date.toISOString().split("T")[0];
       if (!acc[dateKey]) {
@@ -138,11 +145,11 @@ export async function GET(req: NextRequest) {
       acc[dateKey].expenses += transaction.amount < 0 ? Math.abs(transaction.amount) : 0;
       return acc;
     }, {});
-    
+
     const resultDays = Object.values(consolidated);
-  
+
     const days = fillMissingDays(resultDays, startDate, endDate);
-  
+
     return NextResponse.json({
       data: {
         remainingAmount: currentPeriod.remaining,
@@ -157,7 +164,7 @@ export async function GET(req: NextRequest) {
     });
   } catch (error) {
     console.log(error);
-    return NextResponse.json({error: 'Erro desconhecido'}, {status: 500});
+    return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
   } finally {
     await prisma.$disconnect();
   }

@@ -74,6 +74,7 @@ export const transactionsSchema = z.object({
 });
 
 export const transactionsApiFormSchema = z.object({
+  id: z.string().optional(),
   amount: z.string(),
   date: z.date(),
   payee: z.string(),
@@ -90,6 +91,8 @@ export const transactionsApiFormSchema = z.object({
   }).optional(),
   accountId: z.string(),
   categoryId: z.string(),
+  category: z.string().optional(),
+  account: z.string().optional(),
   description: z.string(),
 });
 
@@ -112,6 +115,15 @@ export const transactionsEditSchema = z.object({
   accountId: z.string(),
   categoryId: z.string(),
   description: z.string(),
+});
+
+export const deleteTransaction = z.object({
+  id: z.string().optional(),
+  recurrenceDad: z.string().nullable().optional(),
+  editRecurrence: z.enum(["all", "mentions", "none"], {
+    required_error: "Você precisa selecionar uma opção",
+  }).optional(),
+  date: z.string().optional(),
 });
 
 export const deleteTransactions = z.object({

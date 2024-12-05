@@ -49,7 +49,7 @@ type TransactionFormProps = {
   id?: string;
   defaultValues?: ApiFormValues;
   onSubmit: (values: ApiFormValues) => void;
-  onDelete?: () => void;
+  onDelete?: (values: ApiFormValues) => void;
   disabled?: boolean;
   accountOptions: { label: string, value: string }[];
   categoryOptions: { label: string, value: string }[];
@@ -84,8 +84,8 @@ export const TransactionForm = ({
     });
   };
 
-  const handleDelete = () => {
-    onDelete?.();
+  const handleDelete = (values: ApiFormValues) => {
+    onDelete?.(values);
   };
 
   return (
@@ -190,7 +190,7 @@ export const TransactionForm = ({
               render={({ field }) => (
                 <FormItem className="space-y-4">
                   <FormLabel>
-                    Atenção! Essa recorrência tem transações passadas ou futuras, o que você deseja fazer com elas?
+                    Atenção! Essa recorrência tem transações passadas ou futuras, como você deseja editar ou deletar?
                   </FormLabel>
                   <FormControl>
                     <RadioGroup
@@ -236,7 +236,7 @@ export const TransactionForm = ({
         </Button>
         {
           !!id && (
-            <Button type='button' disabled={disabled} onClick={handleDelete} className='w-full' variant='outline'>
+            <Button type='button' disabled={disabled} onClick={form.handleSubmit(handleDelete)} className='w-full' variant='outline'>
               <Trash className='size-4 mr-2' />
               Deletar transação
             </Button>

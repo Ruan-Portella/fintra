@@ -26,8 +26,12 @@ export const useCreateTransaction = () => {
       queryClient.invalidateQueries({queryKey: ['transactions']});
       queryClient.invalidateQueries({queryKey: ['summary']});
     },
-    onError: () => {
-      toast.error('Erro ao criar transação');
+    onError: (error) => {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     }
   })
   return mutation;
