@@ -172,7 +172,12 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(data);
+    const serializedData = {
+      ...data,
+      amount: Number(data.amount),
+    };
+
+    return NextResponse.json(serializedData);
   } catch (error) {
     console.log('[POST TRANSACTION]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });

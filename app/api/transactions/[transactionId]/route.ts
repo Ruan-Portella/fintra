@@ -200,7 +200,12 @@ export async function PATCH(req: NextRequest, { params: { transactionId } }: { p
       },
     });
 
-    return NextResponse.json(updatedTransaction);
+    const serializedData = {
+      ...updatedTransaction,
+      amount: Number(updatedTransaction.amount),
+    }
+
+    return NextResponse.json(serializedData);
   } catch (error) {
     console.log('[PATCH TRANSACTION ID]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
