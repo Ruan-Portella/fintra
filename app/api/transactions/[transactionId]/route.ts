@@ -39,12 +39,15 @@ export async function GET(req: NextRequest, { params: { transactionId } }: { par
       return sendError(transactionsErrors.TRANSACTION_NOT_FOUND);
     }
 
-    return NextResponse.json(transaction);
+    const serializedData = {
+      ...transaction,
+      amount: Number(transaction.amount),
+    }
+
+    return NextResponse.json(serializedData);
   } catch (error) {
-    console.log(error);
+    console.log('[GET TRANSACTION ID]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -104,23 +107,17 @@ export async function PATCH(req: NextRequest, { params: { transactionId } }: { p
             }
           }
 
-          try {
-            await prisma.transaction.update({
-              where: { id: transaction.id },
-              data: {
-                accountId,
-                categoryId,
-                payee,
-                amount,
-                description,
-                date: new Date(nextDate),
-              },
-            });
-          } catch (error) {
-            console.log(error)
-          } finally {
-            await prisma.$disconnect();
-          }
+          await prisma.transaction.update({
+            where: { id: transaction.id },
+            data: {
+              accountId,
+              categoryId,
+              payee,
+              amount,
+              description,
+              date: new Date(nextDate),
+            },
+          });
         }
         );
         return NextResponse.json({ success: true });
@@ -159,46 +156,34 @@ export async function PATCH(req: NextRequest, { params: { transactionId } }: { p
                 throw new Error('Invalid recurrence type');
             }
           }
-          try {
-            await prisma.transaction.update({
-              where: { id: transaction.id },
-              data: {
-                accountId,
-                categoryId,
-                payee,
-                amount,
-                description,
-                date: new Date(nextDate),
-              },
-            });
-          } catch (error) {
-            console.log(error)
-          } finally {
-            await prisma.$disconnect();
-          }
+          await prisma.transaction.update({
+            where: { id: transaction.id },
+            data: {
+              accountId,
+              categoryId,
+              payee,
+              amount,
+              description,
+              date: new Date(nextDate),
+            },
+          });
         }
         );
         return NextResponse.json({ success: true });
       }
 
       if (editRecurrence === 'none') {
-        try {
-          await prisma.transaction.update({
-            where: { id: transactionId },
-            data: {
-              account: { connect: { id: accountId } },
-              category: { connect: { id: categoryId } },
-              payee,
-              amount,
-              description,
-              date,
-            },
-          });
-        } catch (error) {
-          console.log(error)
-        } finally {
-          await prisma.$disconnect();
-        }
+        await prisma.transaction.update({
+          where: { id: transactionId },
+          data: {
+            account: { connect: { id: accountId } },
+            category: { connect: { id: categoryId } },
+            payee,
+            amount,
+            description,
+            date,
+          },
+        });
         return NextResponse.json({ success: true });
       }
     }
@@ -217,10 +202,8 @@ export async function PATCH(req: NextRequest, { params: { transactionId } }: { p
 
     return NextResponse.json(updatedTransaction);
   } catch (error) {
-    console.log(error);
+    console.log('[PATCH TRANSACTION ID]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -228,7 +211,6 @@ export async function DELETE(req: Request, { params: { transactionId } }: { para
   try {
     const supabase = await createClient();
     const userId = (await supabase.auth.getUser()).data.user?.id;
-
     if (!userId) {
       return sendError(authErrors.NOT_AUTHORIZED);
     }
@@ -245,22 +227,15 @@ export async function DELETE(req: Request, { params: { transactionId } }: { para
         const toUpdatedTransactions = await prisma.transaction.findMany({
           where: { recurrenceDad },
         });
-
-        try {
-          const ids = toUpdatedTransactions.map((transaction) => transaction.id);
-          await prisma.transaction.deleteMany({
-            where: {
-              id: {
-                in: ids
-              }
+        const ids = toUpdatedTransactions.map((transaction) => transaction.id);
+        await prisma.transaction.deleteMany({
+          where: {
+            id: {
+              in: ids
             }
-          });
-          return NextResponse.json({ success: true });
-        } catch (error) {
-          console.log(error)
-        } finally {
-          await prisma.$disconnect();
-        }
+          }
+        });
+        return NextResponse.json({ success: true });
       }
 
       if (editRecurrence === 'mentions') {
@@ -272,37 +247,24 @@ export async function DELETE(req: Request, { params: { transactionId } }: { para
             ]
           },
         });
-
-        try {
-          const ids = toUpdatedTransactions.map((transaction) => transaction.id);
-          await prisma.transaction.deleteMany({
-            where: {
-              id: {
-                in: ids
-              }
+        const ids = toUpdatedTransactions.map((transaction) => transaction.id);
+        await prisma.transaction.deleteMany({
+          where: {
+            id: {
+              in: ids
             }
-          });
-          return NextResponse.json({ success: true });
-        } catch (error) {
-          console.log(error)
-        } finally {
-          await prisma.$disconnect();
-        }
+          }
+        });
+        return NextResponse.json({ success: true });
       }
 
       if (editRecurrence === 'none') {
-        try {
-          await prisma.transaction.delete({
-            where: {
-              id: transactionId
-            }
-          });
-          return NextResponse.json({ success: true });
-        } catch (error) {
-          console.log(error)
-        } finally {
-          await prisma.$disconnect();
-        }
+        await prisma.transaction.delete({
+          where: {
+            id: transactionId
+          }
+        });
+        return NextResponse.json({ success: true });
       }
     }
 
@@ -324,9 +286,7 @@ export async function DELETE(req: Request, { params: { transactionId } }: { para
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.log(error);
+    console.log('[DELETE TRANSACTION ID]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 };

@@ -29,9 +29,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(categories);
   } catch (error) {
-    console.log(error);
+    console.log('[BULK DELETE CATEGORIES]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 };

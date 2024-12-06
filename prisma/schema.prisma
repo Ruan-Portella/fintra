@@ -1,11 +1,13 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
+  schemas   = ["public"]
 }
 
 model Account {
@@ -13,6 +15,9 @@ model Account {
   name         String
   userId       String
   transactions Transaction[]
+
+  @@map("Account")
+  @@schema("public")
 }
 
 model Category {
@@ -20,11 +25,14 @@ model Category {
   name         String
   userId       String
   transactions Transaction[]
+
+  @@map("Category")
+  @@schema("public")
 }
 
 model Transaction {
   id                 String    @id @default(uuid())
-  amount             Int
+  amount             BigInt
   payee              String
   recurrenceType     String?
   recurrenceInterval Int?
@@ -38,4 +46,7 @@ model Transaction {
   updatedAt          DateTime  @updatedAt
   account            Account   @relation(fields: [accountId], references: [id])
   category           Category? @relation(fields: [categoryId], references: [id])
+
+  @@map("Transaction")
+  @@schema("public")
 }

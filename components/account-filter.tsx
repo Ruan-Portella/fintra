@@ -65,7 +65,7 @@ export default function AccountFilter() {
           Todas as contas
         </SelectItem>
         {
-          accounts?.map((account: Accounts) => (
+         Array.isArray(accounts) && accounts?.map((account: Accounts) => (
             <SelectItem key={account.id} value={account.id}>
               {account.name}
             </SelectItem>

@@ -6,7 +6,6 @@ import { differenceInDays, parse, subDays } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 
 async function fetchFinancialData(userId: string, startDate: Date, endDate: Date, accountId: string | null) {
-  try {
     const data = await prisma.transaction.findMany({
       where: {
         AND: [
@@ -25,22 +24,16 @@ async function fetchFinancialData(userId: string, startDate: Date, endDate: Date
     });
 
     const income = data.reduce((acc, transaction) => {
-      return transaction.amount >= 0 ? acc + transaction.amount : acc;
+      return transaction.amount >= 0 ? acc + Number(transaction.amount) : acc;
     }, 0);
 
     const expenses = data.reduce((acc, transaction) => {
-      return transaction.amount < 0 ? acc + Math.abs(transaction.amount) : acc;
+      return transaction.amount < 0 ? acc + Math.abs(Number(transaction.amount)) : acc;
     }, 0);
 
     const remaining = income - expenses;
 
     return [{ income, expenses: -expenses, remaining }];
-  } catch (e) {
-    console.error(e);
-    return [{ income: 0, expenses: 0, remaining: 0 }];
-  } finally {
-    await prisma.$disconnect();
-  }
 }
 
 export async function GET(req: NextRequest) {
@@ -106,7 +99,7 @@ export async function GET(req: NextRequest) {
       const categoryName = allCategories.find(category => category.id === group.categoryId);
       return {
         name: categoryName ? categoryName.name : null,
-        value: Math.abs(group._sum.amount || 0),
+        value: Math.abs(Number(group._sum.amount) || 0),
       }
     });
 
@@ -141,8 +134,8 @@ export async function GET(req: NextRequest) {
       if (!acc[dateKey]) {
         acc[dateKey] = { date: transaction.date, income: 0, expenses: 0 };
       }
-      acc[dateKey].income += transaction.amount >= 0 ? transaction.amount : 0;
-      acc[dateKey].expenses += transaction.amount < 0 ? Math.abs(transaction.amount) : 0;
+      acc[dateKey].income += Number(transaction.amount) >= 0 ? Number(transaction.amount) : 0;
+      acc[dateKey].expenses += Number(transaction.amount) < 0 ? Math.abs(Number(transaction.amount)) : 0;
       return acc;
     }, {});
 
@@ -163,9 +156,7 @@ export async function GET(req: NextRequest) {
       }
     });
   } catch (error) {
-    console.log(error);
+    console.log('[GET SUMMARY]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 }

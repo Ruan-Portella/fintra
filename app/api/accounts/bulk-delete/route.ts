@@ -8,7 +8,6 @@ export async function POST(req: Request) {
   try {
     const supabase = await createClient();
     const userId = (await supabase.auth.getUser()).data.user?.id;
-
     if (!userId) {
       return sendError(authErrors.NOT_AUTHORIZED);
     }
@@ -29,9 +28,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(accounts);
   } catch (error) {
-    console.log(error);
+    console.log('[BULK-DELETE ACCOUNT]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 };

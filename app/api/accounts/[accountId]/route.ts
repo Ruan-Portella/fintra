@@ -30,10 +30,8 @@ export async function GET(req: Request, { params: { accountId } }: { params: { a
 
     return NextResponse.json(accounts);
   } catch (error) {
-    console.log(error);
+    console.log('[GET ACCOUNT]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -79,11 +77,9 @@ export async function PATCH(req: Request, { params: { accountId } }: { params: {
 
     return NextResponse.json(updatedAccount);
   } catch (error) {
-    console.log(error);
+    console.log('[PATCH ACCOUNT]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 }
 
 export async function DELETE(req: Request, { params: { accountId } }: { params: { accountId: string } }) {
@@ -119,9 +115,7 @@ export async function DELETE(req: Request, { params: { accountId } }: { params: 
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.log(error);
+    console.log('[DELETE ACCOUNT]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 };

@@ -47,7 +47,7 @@ export default function Transactions() {
   const deleteTransaction = useBulkDeleteTransactions();
   const transactionsQuery = useGetTransactions();
   const transactions = transactionsQuery.data || [];
-
+  
   const isDisabled = transactionsQuery.isLoading || deleteTransaction.isPending;
 
   const onSubmitImport = async (values: any) => {

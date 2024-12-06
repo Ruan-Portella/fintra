@@ -30,34 +30,37 @@ export async function GET(req: NextRequest) {
 
     const data = await prisma.transaction.findMany({
       where: {
-        AND: [
-          ...(accountId ? [{ accountId }] : []),
-          { account: { userId: userId } },
-          { date: { gte: startDate, lte: endDate } },
-        ],
+      AND: [
+        ...(accountId ? [{ accountId }] : []),
+        { account: { userId: userId } },
+        { date: { gte: startDate, lte: endDate } },
+      ],
       },
       select: {
-        id: true,
-        category: { select: { name: true, id: true } },
-        payee: true,
-        amount: true,
-        description: true,
-        account: { select: { name: true, id: true } },
-        date: true,
-        recurrenceDad: true,
+      id: true,
+      category: { select: { name: true, id: true } },
+      payee: true,
+      amount: true,
+      description: true,
+      account: { select: { name: true, id: true } },
+      date: true,
+      recurrenceDad: true,
       },
       orderBy: {
-        date: 'desc',
+      date: 'desc',
       },
     });
 
-    return NextResponse.json(data);
+    const serializedData = data.map(transaction => ({
+      ...transaction,
+      amount: Number(transaction.amount),
+    }));
+
+    return NextResponse.json(serializedData);
   } catch (error) {
-    console.log(error);
+    console.log('[GET TRANSACTION]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 }
 
 const generateRecurringTransactions = (transaction: ApiFormValues) => {
@@ -171,9 +174,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.log(error);
+    console.log('[POST TRANSACTION]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 }

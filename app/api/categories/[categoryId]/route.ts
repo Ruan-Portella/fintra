@@ -30,11 +30,9 @@ export async function GET(req: Request, { params: { categoryId } }: { params: { 
 
     return NextResponse.json(categories);
   } catch (error) {
-    console.log(error);
+    console.log('[GET CATEGORIES ID]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 }
 
 export async function PATCH(req: Request, { params: { categoryId } }: { params: { categoryId: string } }) {
@@ -79,11 +77,9 @@ export async function PATCH(req: Request, { params: { categoryId } }: { params: 
 
     return NextResponse.json(updatedCategory);
   } catch (error) {
-    console.log(error);
+    console.log('[PATCH CATEGORIES ID]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 }
 
 export async function DELETE(req: Request, { params: { categoryId } }: { params: { categoryId: string } }) {
@@ -119,9 +115,7 @@ export async function DELETE(req: Request, { params: { categoryId } }: { params:
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.log(error);
+    console.log('[DELETE CATEGORIES ID]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 };

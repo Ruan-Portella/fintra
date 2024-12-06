@@ -29,9 +29,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(transaction);
   } catch (error) {
-    console.log(error);
+    console.log('[BULK DELETE TRANSACTION]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 };

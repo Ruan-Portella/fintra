@@ -21,11 +21,9 @@ export async function GET() {
 
     return NextResponse.json(categories);
   } catch (error) {
-    console.log(error);
+    console.log('[GET CATEGORIES]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 }
 
 export async function POST(req: Request) {
@@ -52,9 +50,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(category);
   } catch (error) {
-    console.log(error);
+    console.log('[POST CATEGORIES]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 };

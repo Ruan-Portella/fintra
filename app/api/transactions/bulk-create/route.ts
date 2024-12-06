@@ -19,15 +19,13 @@ export async function POST(req: Request) {
       return sendError(transactionsErrors.TRANSACTION_DATA_REQUIRED);
     }
 
-    const categories = await prisma.transaction.createMany({
+    const transactionsCreated = await prisma.transaction.createMany({
       data: transactions
     });
 
-    return NextResponse.json(categories);
+    return NextResponse.json(transactionsCreated);
   } catch (error) {
-    console.log(error);
+    console.log('[BULK CREATE TRANSACTION]', error);
     return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 };

@@ -25,7 +25,7 @@ export default function Actions({ id, recurrenceDad, date }: Props) {
     onChange: (value: string) => {
       setEditRecurrence(value as 'all' | 'mentions' | 'none');
     },
-    value: editRecurrence ?? 'all'
+    value: editRecurrence ?? 'none'
   });
   const deleteMutation = useDeleteTransaction(id);
   const { onOpen, onClose } = useOpenTransaction();

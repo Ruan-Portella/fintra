@@ -44,8 +44,8 @@ export const useGetTransactions= () => {
 
       return response.data.map((transaction: ResponseType) => ({
         ...transaction,
-        category: transaction.category.name || '',
-        account: transaction.account.name || '',
+        category: transaction?.category?.name || '',
+        account: transaction?.account?.name || '',
         amount: convertMiliunitsToAmount(transaction.amount)
       }));
     }

@@ -5,7 +5,7 @@ const prismaClientSingleton = () => {
     transactionOptions: {
       maxWait: 200000,
       timeout: 200000,
-    }
+    },
   })
 }
 
