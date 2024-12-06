@@ -10,7 +10,7 @@ import { DataTable } from '@/components/data-table';
 import { useGetTransactions } from '@/services/transactions/api/use-get-transactions';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useBulkDeleteTransactions } from '@/services/transactions/api/use-bulk-delete';
-import UploadButton from './upload-button';
+// import UploadButton from './upload-button';
 import ImportCard from './import-card';
 import { useSelectAccount } from '@/services/accounts/hooks/use-select-account';
 import { toast } from 'sonner';
@@ -32,10 +32,10 @@ export default function Transactions() {
   const [variant, setVariant] = useState<VARIANTS>(VARIANTS.LIST);
   const [importResults, setImportResults] = useState<typeof INITIAL_IMPORT_RESULTS>(INITIAL_IMPORT_RESULTS);
 
-  const onUpload = (results: typeof INITIAL_IMPORT_RESULTS) => {
-    setImportResults(results);
-    setVariant(VARIANTS.IMPORT);
-  };
+  // const onUpload = (results: typeof INITIAL_IMPORT_RESULTS) => {
+  //   setImportResults(results);
+  //   setVariant(VARIANTS.IMPORT);
+  // };
 
   const onCancelImport = () => {
     setImportResults(INITIAL_IMPORT_RESULTS);
@@ -107,7 +107,7 @@ export default function Transactions() {
               <Plus className='size-4 mr-2' />
               Nova Transação
             </Button>
-            <UploadButton onUpload={onUpload} />
+            {/* <UploadButton onUpload={onUpload} /> */}
           </div>
         </CardHeader>
         <CardContent>
