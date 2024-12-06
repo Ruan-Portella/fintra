@@ -60,7 +60,7 @@ export const signOutAction = async () => {
 
 export const loginWithGithub = async () => {
   const supabase = await createClient();
-  const {data} = await supabase.auth.signInWithOAuth({ provider: 'github', options: {redirectTo: 'http://localhost:3000/auth/confirm'} });
+  const {data} = await supabase.auth.signInWithOAuth({ provider: 'github', options: {redirectTo: 'https://fintra-rosy.vercel.app/auth/confirm'} });
   if (data.url) {
     redirect(data.url)
   }
@@ -68,7 +68,7 @@ export const loginWithGithub = async () => {
 
 export const loginWithGoogle= async () => {
   const supabase = await createClient();
-  const {data} = await supabase.auth.signInWithOAuth({ provider: 'google', options: {redirectTo: 'http://localhost:3000/auth/confirm'} });
+  const {data} = await supabase.auth.signInWithOAuth({ provider: 'google', options: {redirectTo: 'https://fintra-rosy.vercel.app/auth/confirm'} });
   if (data.url) {
     redirect(data.url)
   }
