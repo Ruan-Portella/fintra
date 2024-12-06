@@ -110,7 +110,9 @@ export default function EditTransactionSheet() {
     <>
       <ConfirmDialog />
       <Sheet open={isOpen} onOpenChange={onClose}>
-        <SheetContent className='space-y-4'>
+        <SheetContent className='space-y-4' style={{
+        overflowY: 'auto'
+      }}>
           <SheetHeader>
             <SheetTitle>Editar Transação</SheetTitle>
           </SheetHeader>

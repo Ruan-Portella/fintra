@@ -66,7 +66,9 @@ export default function NewTransactionSheet() {
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent className='space-y-4'>
+      <SheetContent className='space-y-4' style={{
+        overflowY: 'auto'
+      }}>
         <SheetHeader>
           <SheetTitle>Nova Transação</SheetTitle>
         </SheetHeader>
