@@ -4,7 +4,6 @@ import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowDown, ArrowUp } from "lucide-react"
-import { Checkbox } from "@/components/ui/checkbox"
 import Actions from "./actions"
 import { format } from "date-fns"
 import { formatCurrency } from "@/lib/utils"
@@ -18,28 +17,6 @@ import { StatusColumn } from "./status-column"
 export type ResponseType = z.infer<typeof transactionsApiFormSchema>
 
 export const columns: ColumnDef<ResponseType>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     accessorKey: "date",
     header: ({ column }) => {
@@ -63,7 +40,7 @@ export const columns: ColumnDef<ResponseType>[] = [
       const date = row.getValue('date') as Date;
 
       return (
-        <span>
+        <span className="ml-4">
           {format(date, 'dd MMMM, yyyy', { locale: ptBR })}
         </span>
       )

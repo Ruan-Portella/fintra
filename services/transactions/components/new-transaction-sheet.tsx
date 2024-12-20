@@ -40,7 +40,7 @@ export default function NewTransactionSheet() {
     label: status.name,
     value: status.id
   })) || [];
-  
+
   const accountOptions = Array.isArray(accountQuery?.data) && accountQuery?.data?.map((account: { id: string, name: string }) => ({
     label: account.name,
     value: account.id
@@ -95,6 +95,16 @@ export default function NewTransactionSheet() {
             <TransactionForm
               onSubmit={onSubmit}
               disabled={isPending}
+              defaultValues={{
+                accountId: '',
+                categoryId: '',
+                statusId: '',
+                amount: '',
+                date: new Date(),
+                payee: '',
+                description: '',
+                recurrenceDad: '',
+              }}
               categoryOptions={categoryOptions}
               onCreateCategory={onCreateCategory}
               accountOptions={accountOptions}
