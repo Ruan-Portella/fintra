@@ -17,6 +17,7 @@ export async function POST() {
 
     const transactionsToUpdate = await prisma.transaction.findMany({
       where: {
+        account: { userId: userId },
         statusId: {
           in: ['cd38c215-e126-4141-a92b-1227ae38fe14']
         },
