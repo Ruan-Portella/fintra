@@ -53,7 +53,7 @@ model Transaction {
   date               DateTime
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
-  statusId           String?
+  statusId           String?   @default("cd38c215-e126-4141-a92b-1227ae38fe14")
   account            Account   @relation(fields: [accountId], references: [id])
   category           Category? @relation(fields: [categoryId], references: [id])
   status             Status?   @relation(fields: [statusId], references: [id])

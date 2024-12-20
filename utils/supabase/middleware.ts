@@ -54,6 +54,11 @@ export async function updateSession(request: NextRequest) {
 
   if (!user) {
     // no user, potentially respond by redirecting the user to the login page
+
+    if (request.nextUrl.pathname.includes('update-transactions')) {
+      return supabaseResponse
+    }
+
     if (!request.nextUrl.pathname.startsWith('/auth') || request.nextUrl.pathname === '/auth/reset-password') {
       const url = request.nextUrl.clone()
       url.pathname = '/auth/login'
