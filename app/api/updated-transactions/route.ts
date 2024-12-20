@@ -1,11 +1,21 @@
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/server";
+import { sendError } from "@/lib/utils";
+import { authErrors } from "@/errors";
 
-export async function GET() {
+export async function POST() {
   try {
+    const supabase = await createClient();
+    const userId = (await supabase.auth.getUser()).data.user?.id;
+
+    if (!userId) {
+      return sendError(authErrors.NOT_AUTHORIZED);
+    }
+
     const currentDate = new Date();
-    
-    const transactionsToUpdate =await prisma.transaction.findMany({
+
+    const transactionsToUpdate = await prisma.transaction.findMany({
       where: {
         statusId: {
           in: ['cd38c215-e126-4141-a92b-1227ae38fe14']

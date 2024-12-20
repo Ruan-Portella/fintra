@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, Plus } from 'lucide-react';
+import { Loader2, Plus, RefreshCcw } from 'lucide-react';
 import { useNewTransaction } from '@/services/transactions/hooks/use-new-transaction';
 import { columns } from './columns';
 import { DataTable } from '@/components/data-table';
@@ -15,6 +15,7 @@ import ImportCard from './import-card';
 import { useSelectAccount } from '@/services/accounts/hooks/use-select-account';
 import { toast } from 'sonner';
 import { useBulkCreateTransactions } from '@/services/transactions/api/use-bulk-create';
+import { useUpdatedTransaction } from '@/services/transactions/api/use-updated-transactions';
 
 enum VARIANTS {
   LIST = 'LIST',
@@ -46,8 +47,9 @@ export default function Transactions() {
   const createTransactions = useBulkCreateTransactions();
   const deleteTransaction = useBulkDeleteTransactions();
   const transactionsQuery = useGetTransactions();
+  const updateTransactions = useUpdatedTransaction();
   const transactions = transactionsQuery.data || [];
-  
+
   const isDisabled = transactionsQuery.isLoading || deleteTransaction.isPending;
 
   const onSubmitImport = async (values: any) => {
@@ -106,6 +108,12 @@ export default function Transactions() {
             <Button onClick={newTransaction.onOpen} size='sm' className='w-full lg:w-auto'>
               <Plus className='size-4 mr-2' />
               Nova Transação
+            </Button>
+            <Button onClick={() => {
+              updateTransactions.mutate();
+            }} size='sm' className='w-full lg:w-auto'>
+              <RefreshCcw className='size-4 mr-2' />
+              Atualizar Transações
             </Button>
             {/* <UploadButton onUpload={onUpload} /> */}
           </div>
