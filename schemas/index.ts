@@ -66,6 +66,8 @@ export const transactionsSchema = z.object({
   amount: z.number(),
   date: z.date(),
   payee: z.string(),
+  status: z.string(),
+  statusId: z.string(),
   accountId: z.string(),
   account: z.string(),
   categoryId: z.string(),
@@ -92,6 +94,8 @@ export const transactionsApiFormSchema = z.object({
   accountId: z.string(),
   categoryId: z.string(),
   category: z.string().optional(),
+  status: z.string().optional(),
+  statusId: z.string().optional(),
   account: z.string().optional(),
   description: z.string(),
 });
@@ -105,6 +109,8 @@ export const transactionsFormSchema = z.object({
   account: z.string(),
   categoryId: z.string(),
   category: z.string(),
+  status: z.string(),
+  statusId: z.string(),
   description: z.string(),
 });
 
@@ -114,6 +120,7 @@ export const transactionsEditSchema = z.object({
   payee: z.string(),
   accountId: z.string(),
   categoryId: z.string(),
+  statusId: z.string(),
   description: z.string(),
 });
 

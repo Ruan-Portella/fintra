@@ -26,6 +26,7 @@ const formSchema = z.object({
   date: z.coerce.date(),
   accountId: z.string(),
   categoryId: z.string().nullable().optional(),
+  statusId: z.string().nullable().optional(),
   payee: z.string(),
   amount: z.string(),
   description: z.string().nullable().optional(),
@@ -53,6 +54,7 @@ type TransactionFormProps = {
   disabled?: boolean;
   accountOptions: { label: string, value: string }[];
   categoryOptions: { label: string, value: string }[];
+  statusOptions: { label: string, value: string }[];
   onCreateAccount: (name: string) => void;
   onCreateCategory: (name: string) => void;
 };
@@ -67,6 +69,7 @@ export const TransactionForm = ({
   categoryOptions,
   onCreateAccount,
   onCreateCategory,
+  statusOptions,
 }: TransactionFormProps) => {
   const form = useForm<ApiFormValues>({
     resolver: zodResolver(formSchema),
@@ -80,6 +83,7 @@ export const TransactionForm = ({
       ...values,
       date: values.date,
       categoryId: values.categoryId ?? '',
+      statusId: values.statusId ?? '',
       amount: `${amountInMiliunits}`
     });
   };
@@ -111,6 +115,14 @@ export const TransactionForm = ({
             <FormLabel htmlFor='categoryId'>Categoria</FormLabel>
             <FormControl>
               <Select placeholder='Selecione uma categoria' options={categoryOptions} onCreate={onCreateCategory} value={field.value} onChange={field.onChange} disabled={disabled} />
+            </FormControl>
+          </FormItem>
+        )} />
+        <FormField name='statusId' control={form.control} render={({ field }) => (
+          <FormItem>
+            <FormLabel htmlFor='statusId'>Status</FormLabel>
+            <FormControl>
+              <InputSelect placeholder='Selecione um Status' options={statusOptions} value={field.value} onChange={field.onChange} disabled={disabled} />
             </FormControl>
           </FormItem>
         )} />

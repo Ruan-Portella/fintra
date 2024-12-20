@@ -17,6 +17,7 @@ export const useGetTransaction = (id?: string) => {
         ...response.data,
         categoryId: response.data.category?.id,
         accountId: response.data.account?.id,
+        statusId: response.data.status?.id,
         amount: convertMiliunitsToAmount(response.data.amount)
       };
     }

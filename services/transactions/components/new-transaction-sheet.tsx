@@ -14,6 +14,7 @@ import { useGetCategories } from '@/services/categories/api/use-get-categories';
 import { useGetAccounts } from '@/services/accounts/api/use-get-accounts';
 import { useCreateAccount } from '@/services/accounts/api/use-create-accounts';
 import { Loader2 } from 'lucide-react';
+import { useGetStatus } from '@/services/status/api/use-get-status';
 
 export default function NewTransactionSheet() {
   const { isOpen, onClose } = useNewTransaction();
@@ -24,6 +25,8 @@ export default function NewTransactionSheet() {
   const categoryMutation = useCreateCategory();
   const onCreateCategory = (name: string) => categoryMutation.mutate({ name });
 
+  const statusQuery = useGetStatus();
+
   const accountQuery = useGetAccounts();
   const accountMutation = useCreateAccount();
   const onCreateAccount = (name: string) => accountMutation.mutate({ name });
@@ -31,6 +34,11 @@ export default function NewTransactionSheet() {
   const categoryOptions = Array.isArray(categoryQuery?.data) && categoryQuery?.data?.map((category: { id: string, name: string }) => ({
     label: category.name,
     value: category.id
+  })) || [];
+
+  const statusOptions = Array.isArray(statusQuery?.data) && statusQuery?.data?.map((status: { id: string, name: string }) => ({
+    label: status.name,
+    value: status.id
   })) || [];
   
   const accountOptions = Array.isArray(accountQuery?.data) && accountQuery?.data?.map((account: { id: string, name: string }) => ({
@@ -53,10 +61,13 @@ export default function NewTransactionSheet() {
       values.recurrenceType = values.recurrenceType || 'monthly';
     }
 
+    const statusId = values.statusId || '';
+
     createMutation.mutate({
       ...values,
       date: new Date(values.date).toISOString(),
       amount: +values.amount,
+      statusId
     }, {
       onSuccess: () => {
         onClose();
@@ -88,6 +99,7 @@ export default function NewTransactionSheet() {
               onCreateCategory={onCreateCategory}
               accountOptions={accountOptions}
               onCreateAccount={onCreateAccount}
+              statusOptions={statusOptions}
             />
           )
         }

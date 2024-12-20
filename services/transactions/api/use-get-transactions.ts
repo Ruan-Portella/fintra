@@ -19,6 +19,11 @@ export const transactionsSchema = z.object({
     id: z.string(),
     name: z.string(),
   }),
+  statusId: z.string(),
+  status: z.object({
+    id: z.string(),
+    name: z.string(),
+  }),
   description: z.string(),
 });
 
@@ -46,7 +51,8 @@ export const useGetTransactions= () => {
         ...transaction,
         category: transaction?.category?.name || '',
         account: transaction?.account?.name || '',
-        amount: convertMiliunitsToAmount(transaction.amount)
+        status: transaction?.status?.name || '',
+        amount: convertMiliunitsToAmount(transaction.amount),
       }));
     }
   });

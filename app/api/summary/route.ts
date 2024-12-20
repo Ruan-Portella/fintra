@@ -109,7 +109,7 @@ export async function GET(req: NextRequest) {
 
     const finalCategories = topCategories;
     if (otherCategories.length > 0) {
-      finalCategories.push({ name: 'Other', value: otherSum });
+      finalCategories.push({ name: 'Outros', value: otherSum });
     }
 
     const data = await prisma.transaction.findMany({

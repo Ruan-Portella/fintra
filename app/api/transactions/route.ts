@@ -39,6 +39,7 @@ export async function GET(req: NextRequest) {
       select: {
       id: true,
       category: { select: { name: true, id: true } },
+      status: { select: { name: true, id: true } },
       payee: true,
       amount: true,
       description: true,
@@ -115,7 +116,7 @@ export async function POST(req: NextRequest) {
       return sendError(authErrors.NOT_AUTHORIZED);
     }
 
-    const { accountId, categoryId, amount, date, payee, description, has_recurrence, ...props } = await req.json();
+    const { accountId, categoryId, amount, date, payee, description, has_recurrence, statusId, ...props } = await req.json();
 
     if (!accountId) {
       return sendError(accountErrors.ACCOUNT_ID_REQUIRED);
@@ -138,6 +139,7 @@ export async function POST(req: NextRequest) {
         payee,
         description,
         has_recurrence,
+        statusId,
         ...props
       });
 
@@ -150,7 +152,8 @@ export async function POST(req: NextRequest) {
           amount: string;
           date: Date;
           payee: string;
-          description: string
+          description: string,
+          statusId?: string,
         }) => ({
           ...transaction,
           amount: Number(transaction.amount),
@@ -169,6 +172,7 @@ export async function POST(req: NextRequest) {
         date,
         payee,
         description, 
+        statusId,
       },
     });
 

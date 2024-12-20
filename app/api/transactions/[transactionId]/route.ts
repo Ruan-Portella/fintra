@@ -25,6 +25,7 @@ export async function GET(req: NextRequest, { params: { transactionId } }: { par
       select: {
         id: true,
         category: { select: { name: true, id: true } },
+        status: { select: { name: true, id: true } },
         payee: true,
         amount: true,
         description: true,
@@ -75,7 +76,7 @@ export async function PATCH(req: NextRequest, { params: { transactionId } }: { p
       return sendError(transactionsErrors.TRANSACTION_NOT_FOUND);
     }
 
-    const { accountId, categoryId, payee, amount, description, date, recurrenceDad, editRecurrence } = await req.json();
+    const { accountId, categoryId, payee, amount, description, date, recurrenceDad, editRecurrence, statusId } = await req.json();
 
     if (recurrenceDad) {
       if (editRecurrence === 'all') {
@@ -116,6 +117,7 @@ export async function PATCH(req: NextRequest, { params: { transactionId } }: { p
               amount,
               description,
               date: new Date(nextDate),
+              statusId
             },
           });
         }
@@ -165,6 +167,7 @@ export async function PATCH(req: NextRequest, { params: { transactionId } }: { p
               amount,
               description,
               date: new Date(nextDate),
+              statusId
             },
           });
         }
@@ -182,6 +185,7 @@ export async function PATCH(req: NextRequest, { params: { transactionId } }: { p
             amount,
             description,
             date,
+            status: { connect: { id: statusId } }
           },
         });
         return NextResponse.json({ success: true });
@@ -193,6 +197,7 @@ export async function PATCH(req: NextRequest, { params: { transactionId } }: { p
       data: {
         account: { connect: { id: accountId } },
         category: { connect: { id: categoryId } },
+        status: { connect: { id: statusId } },
         payee,
         amount,
         description,

@@ -30,6 +30,15 @@ model Category {
   @@schema("public")
 }
 
+model Status {
+  id           String        @id @default(uuid())
+  name         String
+  transactions Transaction[]
+
+  @@map("Status")
+  @@schema("public")
+}
+
 model Transaction {
   id                 String    @id @default(uuid())
   amount             BigInt
@@ -44,8 +53,10 @@ model Transaction {
   date               DateTime
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
+  statusId           String?
   account            Account   @relation(fields: [accountId], references: [id])
   category           Category? @relation(fields: [categoryId], references: [id])
+  status             Status?   @relation(fields: [statusId], references: [id])
 
   @@map("Transaction")
   @@schema("public")

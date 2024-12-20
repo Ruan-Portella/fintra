@@ -13,6 +13,7 @@ import { AccountColumn } from "./accounts-column"
 import { CategoryColumn } from "./category-column"
 import { transactionsApiFormSchema } from "@/schemas"
 import { ptBR } from "date-fns/locale"
+import { StatusColumn } from "./status-column"
 
 export type ResponseType = z.infer<typeof transactionsApiFormSchema>
 
@@ -63,7 +64,7 @@ export const columns: ColumnDef<ResponseType>[] = [
 
       return (
         <span>
-          {format(date, 'dd MMMM, yyyy', { locale: ptBR })}	
+          {format(date, 'dd MMMM, yyyy', { locale: ptBR })}
         </span>
       )
     },
@@ -91,6 +92,33 @@ export const columns: ColumnDef<ResponseType>[] = [
       return (
         <span>
           <CategoryColumn category={row.original.category ?? ''} categoryId={row.original.categoryId} id={row.original.id ?? ''} />
+        </span>
+      )
+    },
+  },
+  {
+    accessorKey: "status",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          {
+            column.getIsSorted() === "asc" ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            )
+          }
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      return (
+        <span>
+          <StatusColumn status={row.original.status ?? ''} statusId={row.original.statusId || ''} id={row.original.id ?? ''} />
         </span>
       )
     },
