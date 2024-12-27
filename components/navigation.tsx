@@ -6,6 +6,9 @@ import { useMedia } from 'react-use'
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import { Button } from './ui/button';
 import { Menu } from 'lucide-react';
+import { useSearchParams } from 'next/navigation'
+import { addDays, format, subDays } from 'date-fns'
+import qs from 'query-string';
 
 const routes = [
   {
@@ -34,6 +37,7 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const params = useSearchParams();
   const isMobile = useMedia('(max-width: 1024px)', false);
 
   const onClick = (href: string) => {
@@ -52,11 +56,36 @@ export default function Navigation() {
         <SheetContent side='left' className='px-2' >
           <nav className='flex flex-col gap-y-2 pt-6'>
             {
-              routes.map((route) => (
-                <Button key={route.href} variant={route.href === pathname ? 'secondary' : 'ghost'} onClick={() => onClick(route.href)} className='w-full justify-start'>
-                  {route.label}
-                </Button>
-              ))
+              routes.map((route) => {
+                const pathnameHref = route.href;
+
+                const from = params.get('from') || '';
+                const to = params.get('to') || '';
+
+                const defaultTo = new Date();
+                const defaultFrom = subDays(defaultTo, 30);
+
+                const dateState = {
+                  from: from ? addDays(new Date(from), 1) : defaultFrom,
+                  to: to ? addDays(new Date(to), 1) : defaultTo
+                }
+
+                const query = {
+                  from: format(dateState?.from || defaultFrom, 'yyyy-MM-dd'),
+                  to: format(dateState?.to || defaultTo, 'yyyy-MM-dd'),
+                };
+
+                const url = qs.stringifyUrl({
+                  url: pathnameHref,
+                  query
+                }, { skipNull: true, skipEmptyString: true });
+
+                return (
+                  <Button key={route.href} variant={route.href === pathname ? 'secondary' : 'ghost'} onClick={() => onClick(url)} className='w-full justify-start'>
+                    {route.label}
+                  </Button>
+                )
+              })
             }
           </nav>
         </SheetContent>
