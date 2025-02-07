@@ -16,13 +16,13 @@ export const StatusColumn = ({ id, status, statusId }: Props) => {
   };
 
   const statusColor: { [key: string]: string } = {
-    'Pendente': 'text-yellow-500',
-    'Pago': 'text-green-500',
-    'Atrasado': 'text-rose-500',
+    'cd38c215-e126-4141-a92b-1227ae38fe14': 'text-yellow-500',
+    '2d9f84bc-1b34-4bfd-8669-46a1879dbe2f': 'text-green-500',
+    'd0618e3f-805d-4252-8fcb-53ce58bce469': 'text-rose-500',
   }
 
   return (
-    <div onClick={onClick} className={cn("flex items-center cursor-pointer hover:underline", statusColor[status || 'Atrasado'])}>
+    <div onClick={onClick} className={cn("flex items-center cursor-pointer hover:underline", statusColor[statusId || 'Atrasado'])}>
       {!status && <TriangleAlert className="mr-2 size-4 shrink-0"/> }
       {status || 'Sem Status'}
     </div>
