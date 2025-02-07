@@ -52,6 +52,7 @@ export const useGetTransactions= () => {
         category: transaction?.category?.name || '',
         account: transaction?.account?.name || '',
         status: transaction?.status?.name || '',
+        statusId: transaction?.status?.id || '',
         amount: convertMiliunitsToAmount(transaction.amount),
       }));
     }
