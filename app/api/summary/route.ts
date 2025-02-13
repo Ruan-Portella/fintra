@@ -5,35 +5,44 @@ import { createClient } from "@/utils/supabase/server";
 import { differenceInDays, parse, subDays } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 
-async function fetchFinancialData(userId: string, startDate: Date | null, endDate: Date, accountId: string | null) {
+async function fetchFinancialData(userId: string, endDate: Date, accountId: string | null) {
     const data = await prisma.transaction.findMany({
       where: {
         AND: [
           ...(accountId ? [{ accountId }] : []),
           { account: { userId: userId } },
-          { date: { gte: startDate ? startDate : undefined, lte: endDate } },
+          { date: { lte: endDate } },
         ],
       },
       select: {
         amount: true,
         accountId: true,
+        date: true,
       },
       orderBy: {
         date: 'desc',
       },
     });
 
-    const income = data.reduce((acc, transaction) => {
-      return transaction.amount >= 0 ? acc + Number(transaction.amount) : acc;
-    }, 0);
+    return data;
+}
 
-    const expenses = data.reduce((acc, transaction) => {
-      return transaction.amount < 0 ? acc + Math.abs(Number(transaction.amount)) : acc;
-    }, 0);
+async function formatFinancialData(dataFinancial: { amount: bigint, date: Date }[], startDate: Date | undefined, endDate: Date) {
+  const data = dataFinancial.filter(transaction => startDate ? transaction.date >= startDate : true && transaction.date <= endDate);
 
-    const remaining = income - expenses;
+  console.log('data', data);
+  
+  const income = data.reduce((acc, transaction) => {
+    return transaction.amount >= 0 ? acc + Number(transaction.amount) : acc;
+  }, 0);
 
-    return [{ income, expenses: -expenses, remaining }];
+  const expenses = data.reduce((acc, transaction) => {
+    return transaction.amount < 0 ? acc + Math.abs(Number(transaction.amount)) : acc;
+  }, 0);
+
+  const remaining = income - expenses;
+
+  return [{ income, expenses: -expenses, remaining }];
 }
 
 export async function GET(req: NextRequest) {
@@ -61,11 +70,13 @@ export async function GET(req: NextRequest) {
     const lastPeriodStart = subDays(startDate, periodLength + 1);
     const lastPeriodEnd = subDays(endDate, periodLength + 1);
 
-    const [currentPeriod] = await fetchFinancialData(userId, startDate, endDate, accountId);
+    const dataFinancial = await fetchFinancialData(userId, endDate, accountId);
 
-    const [totalPeriod] = await fetchFinancialData(userId, null, endDate, accountId);
+    const [totalPeriod] = await formatFinancialData(dataFinancial, undefined, endDate);
 
-    const [lastPeriod] = await fetchFinancialData(userId, lastPeriodStart, lastPeriodEnd, accountId);
+    const [currentPeriod] = await formatFinancialData(dataFinancial, startDate, endDate);
+
+    const [lastPeriod] = await formatFinancialData(dataFinancial, lastPeriodStart, lastPeriodEnd);
 
     const incomeChange = calculatePercentageChange(currentPeriod.income, lastPeriod.income);
     const expensesChange = calculatePercentageChange(currentPeriod.expenses, lastPeriod.expenses);
