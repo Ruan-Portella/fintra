@@ -30,8 +30,6 @@ async function fetchFinancialData(userId: string, endDate: Date, accountId: stri
 async function formatFinancialData(dataFinancial: { amount: bigint, date: Date }[], startDate: Date | undefined, endDate: Date) {
   const data = dataFinancial.filter(transaction => startDate ? transaction.date >= startDate : true && transaction.date <= endDate);
 
-  console.log('data', data);
-  
   const income = data.reduce((acc, transaction) => {
     return transaction.amount >= 0 ? acc + Number(transaction.amount) : acc;
   }, 0);
