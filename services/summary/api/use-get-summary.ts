@@ -6,10 +6,13 @@ import axios from "axios";
 
 const Summary = z.object({
   incomeAmount: z.number(),
+  totalIncome: z.number(),
   incomeChange: z.number(),
   expensesAmount: z.number(),
+  totalExpenses: z.number(),
   expensesChange: z.number(),
   remainingAmount: z.number(),
+  totalRemaining: z.number(),
   remainingChange: z.number(),
   categories: z.array(z.object({
     name: z.string(),
@@ -51,6 +54,9 @@ export const useGetSummary = () => {
         incomeAmount: convertMiliunitsToAmount(data.incomeAmount),
         expensesAmount: convertMiliunitsToAmount(data.expensesAmount),
         remainingAmount: convertMiliunitsToAmount(data.remainingAmount),
+        totalIncome: convertMiliunitsToAmount(data.totalIncome),
+        totalExpenses: convertMiliunitsToAmount(data.totalExpenses),
+        totalRemaining: convertMiliunitsToAmount(data.totalRemaining),
         categories: data.categories.map((category) => ({
           ...category,
           value: convertMiliunitsToAmount(category.value)

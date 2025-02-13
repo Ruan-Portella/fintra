@@ -30,6 +30,7 @@ export const DataGrid = () => {
         <DataCard
           title='Saldo'
           value={data?.remainingAmount}
+          totalValue={data?.totalRemaining}
           percentageChange={data?.remainingChange}
           icon={FaPiggyBank}
           variant='default'
@@ -37,6 +38,7 @@ export const DataGrid = () => {
         <DataCard
           title='Renda'
           value={data?.incomeAmount}
+          totalValue={data?.totalIncome}
           percentageChange={data?.incomeChange}
           icon={FaArrowTrendUp}
           variant='success'
@@ -44,6 +46,7 @@ export const DataGrid = () => {
         <DataCard
           title='Despesas'
           value={data?.expensesAmount}
+          totalValue={data?.totalExpenses}
           percentageChange={data?.expensesChange}
           icon={FaArrowTrendDown}
           variant='danger'

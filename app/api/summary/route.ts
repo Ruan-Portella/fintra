@@ -5,13 +5,13 @@ import { createClient } from "@/utils/supabase/server";
 import { differenceInDays, parse, subDays } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 
-async function fetchFinancialData(userId: string, startDate: Date, endDate: Date, accountId: string | null) {
+async function fetchFinancialData(userId: string, startDate: Date | null, endDate: Date, accountId: string | null) {
     const data = await prisma.transaction.findMany({
       where: {
         AND: [
           ...(accountId ? [{ accountId }] : []),
           { account: { userId: userId } },
-          { date: { gte: startDate, lte: endDate } },
+          { date: { gte: startDate ? startDate : undefined, lte: endDate } },
         ],
       },
       select: {
@@ -62,6 +62,8 @@ export async function GET(req: NextRequest) {
     const lastPeriodEnd = subDays(endDate, periodLength + 1);
 
     const [currentPeriod] = await fetchFinancialData(userId, startDate, endDate, accountId);
+
+    const [totalPeriod] = await fetchFinancialData(userId, null, endDate, accountId);
 
     const [lastPeriod] = await fetchFinancialData(userId, lastPeriodStart, lastPeriodEnd, accountId);
 
@@ -146,10 +148,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       data: {
         remainingAmount: currentPeriod.remaining,
+        totalRemaining: totalPeriod.remaining,
         remainingChange,
         incomeAmount: currentPeriod.income,
+        totalIncome: totalPeriod.income,
         incomeChange,
         expensesAmount: currentPeriod.expenses,
+        totalExpenses: totalPeriod.expenses,
         expensesChange,
         categories: finalCategories,
         days
