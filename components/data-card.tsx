@@ -102,9 +102,16 @@ export const DataCard = ({
         <h1 className="font-bold text-2xl mb-2 line-clamp-1 break-all">
           <Countup preserveValue start={0} end={isTotal ? totalValue : value} decimal='2' decimalPlaces={2} formattingFn={formatCurrency} />
         </h1>
-        <p className={cn('text-muted-foreground text-sm line-clamp-1 mb-10', (percentageChange > 0 || totalValue > 0) && 'text-emerald-500', (percentageChange < 0 || totalValue < 0) && 'text-rose-500')}>
-          {isTotal ? 'Total acumulado' : `${formatPercentage(percentageChange, { addPrefix: true })} do mês anterior`}
-        </p>
+        {isTotal ? (
+          <p className={cn('text-muted-foreground text-sm line-clamp-1 mb-10', (totalValue > 0) && 'text-emerald-500', (totalValue < 0) && 'text-rose-500')}>
+            Total acumulado
+          </p>
+        ) : (
+          <p className={cn('text-muted-foreground text-sm line-clamp-1 mb-10', (percentageChange > 0) && 'text-emerald-500', (percentageChange < 0) && 'text-rose-500')}>
+            {formatPercentage(percentageChange, { addPrefix: true })} do mês anterior
+          </p>
+        )
+        }
         <DataRecharts variant={variant} />
       </CardContent>
     </Card>
